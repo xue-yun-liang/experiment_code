@@ -1,0 +1,19 @@
+design_space:
+  core: {default_val: 1,step: 1,rrange: [1, 16]}
+  l1i_size: {default_val: 256,step: 0,rrange: [4,8,16,32,64,128,256,512,1024,2048,4096]}
+  l1d_size: {default_val: 256,step: 0,rrange: [4,8,16,32,64,128,256,512,1024,2048,4096]}
+  l2_size: {default_val: 256,step: 0,rrange: [64,128,256,512,1024,2048,4096,8192,16384,32768,65536]}
+  l1i_assoc: {default_val: 4,step: 0,rrange: [1,2,4,8,16]}
+  l1d_assoc: {default_val: 4,step: 0,rrange: [1,2,4,8,16]}
+  l2_assoc: {default_val: 4,step: 0,rrange: [1,2,4,8,16]}
+  sys_clock: {default_val: 2,step: 0.1,rrange: [2,4]}
+
+constraints:
+  # FIXME: give more reasonable value
+  normal: {AREA: 100, POWER: 60}
+  cloud: {AREA: 400, POWER: 500}
+  embed: {AREA: 50, POWER: 20}
+
+target: normal  # specific platform, e.g. normal, cloud, embed
+goal: latency   # Actual optimization objectives, e.g. latency, energy, latency&energy
+th_ratio: 2     # A hyperparameter in reward function which used to control reward values
