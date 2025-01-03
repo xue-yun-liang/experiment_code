@@ -1,0 +1,1 @@
+mkdir -p /app/mcpat_in /app/mcpat_out /app/gem_sim_out

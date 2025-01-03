@@ -131,16 +131,6 @@ class ERDSE:
     def train(self):
         current_status = dict()  # S
         next_status = dict()  # S'
-        reward_log_name = (
-            "record/objectvalue/"
-            + "reward_"
-            + "ERDSE"
-            + "_"
-            + str(self.iindex)
-            + ".txt"
-        )
-        reward_log = open(reward_log_name, "w")
-
         period_bound = self.SAMPLE_PERIOD_BOUND + self.PERIOD_BOUND
         for period in range(period_bound):
             print(f"period:{period}", end="\r")
@@ -226,7 +216,6 @@ class ERDSE:
                         self.objectvalue_list.append(reward)
                         self.objectvalue_list2.append(reward2)
                         self.power_list.append(power)
-                        print(f"{period}\t{reward}", end="\n", file=reward_log)
 
                 reward_list.append(reward)
 

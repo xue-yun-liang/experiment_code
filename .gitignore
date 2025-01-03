@@ -16,4 +16,4 @@ dataflow_*.m
 __pycache__/*.pyc
 util/__pycache__/*.pyc
 
-m5out/
+m5out/*
