@@ -12,3 +12,4 @@ dataflow_*.m
 
 # pyc files
 __pycache__/*.pyc
+util/__pycache__
