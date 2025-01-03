@@ -178,9 +178,9 @@ class ERDSE:
 
                     metrics = self.evaluation.eval(next_status.values())
                     self.desin_point_array.append(next_status.values())
-                    self.metric_array.append(metrics)
+                    
                     if metrics != None:
-
+                        self.metric_array.append(metrics.values())
                         energy = metrics["latency"]
                         area = metrics["Area"]
                         runtime = metrics["latency"]
@@ -195,6 +195,7 @@ class ERDSE:
                         objectvalue3 = energy
                         print(reward, self.constraints.get_punishment())
                     else:
+                        self.metric_array.append([0,0,0,0])
                         reward = 0
                     #### recording
                     if period < self.SAMPLE_PERIOD_BOUND:
@@ -317,7 +318,7 @@ class ERDSE:
         obs_array = pd.DataFrame(self.desin_point_array)
         obs_array.to_csv("record/erdse_obs.csv",header=None,index=None)
         metric_array = pd.DataFrame(self.metric_array)
-        metric_array.to_csv("record/erdse_metric.csv",header = None, index = None)
+        metric_array.to_csv("record/erdse_metric.csv",header = ['latency','Area','energy','power'], index = None)
 
 
 

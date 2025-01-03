@@ -394,10 +394,10 @@ class MOMPRDSE:
             else:
                 self.fillter_list.append(next_status)
             metrics = self.evaluation.eval(next_status.values())
-            self.metric_array.append(metrics)
             self.design_point_array.append(next_status.values())
     
             if metrics != None:
+                self.metric_array.append(metrics.values())
 
                 energy = metrics["latency"]
                 area = metrics["Area"]
@@ -417,6 +417,7 @@ class MOMPRDSE:
             else:
                 reward_runtime = 0
                 reward_power = 0
+                self.metric_array.append([0,0,0,0])
             print(reward_runtime, reward_power)
 
             reward = reward_runtime
@@ -681,7 +682,7 @@ class MOMPRDSE:
         obs_array = pd.DataFrame(self.design_point_array)
         obs_array.to_csv("record/momprdse_obs.csv",header=None,index=None)
         metric_array = pd.DataFrame(self.metric_array)
-        metric_array.to_csv("record/momprdes_metric.csv",header = None, index = None)
+        metric_array.to_csv("record/momprdes_metric.csv",header = ['latency','Area','energy','power'], index = None)
 
 
 def run(iindex):

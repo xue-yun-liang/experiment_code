@@ -153,9 +153,9 @@ class RIDSE:
                     
                     metrics = self.evaluation.eval(next_status.values())
                     self.desin_point_array.append(next_status.values())
-                    self.metric_array.append(metrics)
+                    
                     if metrics != None:
-
+                        self.metric_array.append(metrics.values())
                         energy = metrics["latency"]
                         area = metrics["Area"]
                         runtime = metrics["latency"]
@@ -168,6 +168,7 @@ class RIDSE:
                     else:
                         reward = 0
                         power = 0
+                        self.metric_array.append([0,0,0,0])
 
 
                     #### recording
@@ -237,7 +238,7 @@ class RIDSE:
         obs_array = pd.DataFrame(self.desin_point_array)
         obs_array.to_csv("record/ri_obs.csv",header = None, index = None)
         metric_array = pd.DataFrame(self.metric_array)
-        metric_array.to_csv("record/ri_metric.csv",header = None, index = None)
+        metric_array.to_csv("record/ri_metric.csv",header = ['latency','Area','energy','power'], index = None)
 
 
 # running the main loop of the algorithms
