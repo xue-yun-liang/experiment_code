@@ -1,7 +1,9 @@
 # record files will not be updated
 record/*.csv
+record/*.txt
 record/**/*.csv
 record/**/*.png
+record/**/*.txt
 
 # dataflow and hw description files will not be updated
 desc/dataflow_*.m
@@ -12,4 +14,6 @@ dataflow_*.m
 
 # pyc files
 __pycache__/*.pyc
-util/__pycache__
+util/__pycache__/*.pyc
+
+m5out/

@@ -328,6 +328,62 @@ class actor_policyfunction():
 				action_index = torch.tensor(dimension.get_current_index())
 		return action_index
 
+	def action_choose_with_no_grad_3(self, policyfunction,policyfunction_2,policyfunction_3,design_space, dimension_index,signol, std=0.1,is_train=True):
+		status = design_space.get_status()
+		with torch.no_grad():
+			status_normalization = status_normalize(status, design_space)
+			probs1 = policyfunction(status_to_Variable(status_normalization), dimension_index)
+			probs2 = policyfunction_2(status_to_Variable(status_normalization), dimension_index)
+			probs3 = policyfunction_3(status_to_Variable(status_normalization), dimension_index)
+
+
+
+			if signol==1:
+				probs = probs1
+				#print("1")
+			elif signol==2:
+				probs = probs2
+				#print("2")
+			else:
+				probs = probs3
+				#print("3")
+
+			if (is_train):
+				model = design_space.get_dimension_model(dimension_index)
+				if (model["name"] == "normal"):
+					noise = torch.normal(mean=torch.zeros_like(probs), std=std)
+					probs_noise = probs + noise
+					probs_noise = torch.clamp(probs_noise, 0, 1)
+				# probs_noise = abs(probs_noise)
+				# probs_noise = probs_noise/probs_noise.sum()
+				# print(f"probs_noise:{probs_noise}")
+				# probs_noise = probs
+				elif (model["name"] == "one_hot"):
+					noise = torch.normal(mean=torch.zeros_like(probs), std=model["param"])
+					probs_noise = probs + noise
+					probs_noise = torch.clamp(probs_noise, 0, 1)
+			# probs_noise = abs(probs_noise)
+			# probs_noise = probs_noise/probs_noise.sum()
+			else:
+				probs_noise = probs
+
+			'''
+			if(dimension_index == 2):
+				print(f"probs:{probs}")
+				print(f"noise:{noise}")
+				#pdb.set_trace()
+			'''
+
+			# pdb.set_trace()
+			# probs_noise = torch.abs(probs + noise)
+			# probs_noise = torch.nn.functional.softmax(probs + noise)
+			# print(f"original:{probs}")
+			# print(f"noise:{probs_noise}")
+			#### use multinomial to realize the sampling of policy function
+			action_index = probs_noise.multinomial(num_samples=1).data
+
+		return action_index, probs_noise[action_index].data
+
 	'''
 	def sldse_action_choose_with_no_grad(self, policyfunction, tutor, design_space, dimension_index, std = 0.1, w_probs = 0.9, is_train = True):
 		status = design_space.get_status()

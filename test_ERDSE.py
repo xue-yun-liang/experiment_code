@@ -5,8 +5,8 @@ from multiprocessing import Pool
 
 import gym
 import numpy as np
+import pandas as pd
 import torch
-import xlwt
 import yaml
 import sys
 
@@ -37,7 +37,7 @@ class ERDSE:
         random.seed(seed)
 
         # assign goal, platgorm and constraints
-        with open('/app/CRLDSE/util/config.yaml', 'r') as file:
+        with open('util/config.yaml', 'r') as file:
             config_data = yaml.safe_load(file)
 
         self.config = config_self_new(config_data)
@@ -49,7 +49,7 @@ class ERDSE:
         self.config.config_check()
 
         # define the hyperparameters
-        self.PERIOD_BOUND = 500
+        self.PERIOD_BOUND = 1       # set epochs
         self.SAMPLE_PERIOD_BOUND = 1
         self.GEMA = 0.999  # RL parameter, discount ratio
         self.ALPHA = 0.001  # RL parameter, learning step rate
@@ -125,6 +125,8 @@ class ERDSE:
 
         self.action_array = list()
         self.reward_array = list()
+        self.desin_point_array = list()
+        self.metric_array = list()
 
     def train(self):
         current_status = dict()  # S
@@ -185,7 +187,8 @@ class ERDSE:
                 else:
 
                     metrics = self.evaluation.eval(next_status.values())
-
+                    self.desin_point_array.append(next_status.values())
+                    self.metric_array.append(metrics)
                     if metrics != None:
 
                         energy = metrics["latency"]
@@ -310,21 +313,22 @@ class ERDSE:
                 # logger.info(loss)
 
                 # logger.info(f"loss:{loss}")
-                # self.worksheet.write(int(period / self.BATCH_SIZE) + 1, 2, loss.item())
                 self.policy_optimizer.zero_grad()
                 loss.backward()
                 self.policy_optimizer.step()
             else:
                 print("no avaiable sample")
-
         # end for-period
-        self.workbook.save("record/new_reward&return/RLDSE_reward_record_old.xls")
 
     # end def-train
 
     def save_record(self):
-        np.savetxt("record/ri_reward.csv", self.reward_array, delimiter=',', fmt='%f')
-        np.savetxt("record/detail.csv", np.stack((self.all_objectvalue,self.all_objectvalue2),axis=1), delimiter=',', fmt='%f')
+        np.savetxt("record/erdse_reward.csv", self.reward_array, delimiter=',', fmt='%f')
+        np.savetxt("record/erdse_detail.csv", np.stack((self.all_objectvalue,self.all_objectvalue2),axis=1), delimiter=',', fmt='%f')
+        obs_array = pd.DataFrame(self.desin_point_array)
+        obs_array.to_csv("record/erdse_obs.csv",header=None,index=None)
+        metric_array = pd.DataFrame(self.metric_array)
+        metric_array.to_csv("record/erdse_metric.csv",header = None, index = None)
 
 
 
@@ -334,44 +338,9 @@ def run(iindex):
     DSE =ERDSE(iindex)
     print(f"DSE scale:{DSE.DSE_action_space.get_scale()}")
     DSE.train()
-    DSE.test()
+    DSE.save_record()
 
-    # workbook = xlwt.Workbook(encoding="ascii")
-    # worksheet = workbook.add_sheet("1")
-    # worksheet.write(0, 0, "index")
-    # worksheet.write(0, 1, "best_objectvalue")
-    # worksheet.write(0, 2, "best_objectvalue2")
-    # for index, best_objectvalue in enumerate(DSE.best_objectvalue_list):
-    #     worksheet.write(index + 1, 0, index + 1)
-    #     worksheet.write(index + 1, 1, best_objectvalue)
-    # for index, best_objectvalue in enumerate(DSE.best_objectvalue2_list):
-    #     worksheet.write(index + 1, 2, best_objectvalue)
-    # name = "record/objectvalue/" + "_" + "ERDSE" + "_" + str(iindex) + ".xls"
-    # workbook.save(name)
-    # workbook2 = xlwt.Workbook(encoding="ascii")
-    # worksheet2 = workbook2.add_sheet("1")
-    # worksheet2.write(0, 0, "index")
-    # worksheet2.write(0, 1, "objectvalue1")
-    # worksheet2.write(0, 2, "objectvalue2")
-    # for index, objectvalue in enumerate(DSE.all_objectvalue):
-    #     worksheet2.write(index + 1, 0, index + 1)
-    #     worksheet2.write(index + 1, 1, objectvalue)
-    # for index, objectvalue in enumerate(DSE.all_objectvalue2):
-    #     worksheet2.write(index + 1, 2, objectvalue)
-    # for index, objectvalue in enumerate(DSE.all_objectvalue3):
-    #     worksheet2.write(index + 1, 3, objectvalue)
-    # name = "record/objectvalue/" + "ERDSE" + "_" + str(iindex) + "all_value" + ".xls"
-    # workbook2.save(name)
-    """
-	tsne3D(DSE.action_array, DSE.reward_array, "ERDSE" + "_" + DSE.nnmodel + "_" + DSE.target)
-	high_value_reward = 0
-	for reward in DSE.reward_array:
-		if(reward >= 10): high_value_reward += 1
-	high_value_reward_proportion = high_value_reward/len(DSE.reward_array)
-	hfile = open("high_value_reward_proportion_"+str(iindex)+".txt", "w")
-	logger.info(f"@@@@high-value design point proportion:{high_value_reward_proportion}@@@@", file=hfile)
-	"""
-    print(f"%%%%TEST{iindex} END%%%%")
+
 
 
 if __name__ == "__main__":

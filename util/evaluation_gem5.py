@@ -1,12 +1,9 @@
 import os
 import re
 import time
-import subprocess as subp
-from optparse import OptionParser
 from subprocess import Popen
 
 import numpy as np
-from gym_wapper.envs.utils import read_config
 
 mcpat_bin = "mcpat"
 
@@ -195,7 +192,7 @@ def split_stats_file():
 def run_mcpat(obs):
     """sim step3: convert the results of GEM5 to XML format and run mcpat sim, return metrics"""
     trans = Popen(["python3", f"/app/cMcPAT/Scripts/GEM5ToMcPAT.py", \
-        f"/app/gem_sim_out/gem_output.txt", f"/app/dse_env/gym_wapper/envs/m5out/config.json", 
+        f"/app/gem_sim_out/gem_output.txt", f"./m5out/config.json", 
         f"/app/cMcPAT/mcpat/ProcessorDescriptionFiles/x86_AtomicSimpleCPU_template_core_{obs['core']}.xml", 
         "-o", f"/app/mcpat_in/test.xml"])
     trans.wait()

@@ -6,8 +6,8 @@ from multiprocessing import Pool
 import gym
 import sys
 import numpy as np
+import pandas as pd
 import torch
-import xlwt
 import yaml
 
 sys.path.append("./util/")
@@ -37,13 +37,12 @@ class MOMPRDSE:
         random.seed(seed)
 
         # assign goal, platgorm and constraints
-        with open('/app/CRLDSE/util/config.yaml', 'r') as file:
+        with open('util/config.yaml', 'r') as file:
             config_data = yaml.safe_load(file)
 
         self.config = config_self_new(config_data)
         self.DSE_action_space = create_space_gem5(config_data)
         self.constraints = self.config.constraints
-
 
         ##initial evaluation
         default_state = {
@@ -59,7 +58,7 @@ class MOMPRDSE:
         self.evaluation = evaluation_gem5(default_state)
 
         # define the hyperparameters
-        self.PERIOD_BOUND = 500
+        self.PERIOD_BOUND = 1 # set epochs
         self.SAMPLE_PERIOD_BOUND = 4
         self.GEMA = 0.999  # RL parameter, discount ratio
         self.ALPHA = 0.001  # RL parameter, learning step rate
@@ -92,12 +91,8 @@ class MOMPRDSE:
         ##initial e_greedy_policy_function
         self.actor = actor_policyfunction()
 
-        ##initial evaluation
-        # self.evaluation = evaluation_function(self.nnmodel, self.target)
 
         ##initial optimizer
-
-        # +++++++++++++++++++++++++++++++first weight+++++++++++++++++++++++++++++++++++
         self.policy_optimizer = torch.optim.Adam(
             self.policyfunction.parameters(),
             lr=self.ALPHA,
@@ -177,6 +172,9 @@ class MOMPRDSE:
         self.fillter_reward_buffer3 = list()
         self.fillter_list = list()
 
+        self.design_point_array = list()
+        self.metric_array = list()
+
     def train_fillter(self, fillter, obs_list, reward_list):
         print(
             f"**************  Training the fillter, now we have {len(obs_list)} samples   ******************"
@@ -251,13 +249,6 @@ class MOMPRDSE:
         stack_renew = 0
         current_status = dict()  # S
         next_status = dict()  # S'
-        # reward_log_name = (
-        #     "record/objectvalue_double_three_policy/"
-        #     + "reward_"
-        #     + str(self.iindex)
-        #     + ".txt"
-        # )
-        # reward_log = open(reward_log_name, "w")
         period = 0
         period_bound = self.SAMPLE_PERIOD_BOUND + self.PERIOD_BOUND
         while period < self.SAMPLE_PERIOD_BOUND + self.PERIOD_BOUND:
@@ -402,15 +393,17 @@ class MOMPRDSE:
                 continue
             else:
                 self.fillter_list.append(next_status)
-
-            metrics = self.evaluation.eval(next_status)
+            metrics = self.evaluation.eval(next_status.values())
+            self.metric_array.append(metrics)
+            self.design_point_array.append(next_status.values())
+    
             if metrics != None:
 
                 energy = metrics["latency"]
                 area = metrics["Area"]
                 runtime = metrics["latency"]
                 power = metrics["power"]
-                self.constraints.update({"AREA": area})
+                self.constraints.update({"AREA": area,"POWER":power})
 
                 reward_runtime = 6.25 / (
                     runtime / 0.004028 * self.constraints.get_punishment()
@@ -463,7 +456,7 @@ class MOMPRDSE:
                 self.objectvalue_list.append(reward)
                 self.objectvalue_list2.append(reward2)
                 self.power_list.append(power)
-                print(f"{period}\t{reward}", end="\n", file=reward_log)
+
 
             reward_list.append(reward)
             reward2_list.append(reward2)
@@ -492,8 +485,6 @@ class MOMPRDSE:
                 return_g = reward_list[T - 1 - t] + self.GEMA * return_g
                 return_list.append(torch.tensor(return_g).reshape(1))
             return_list.reverse()
-            self.worksheet.write(period + 1, 0, period)
-            self.worksheet.write(period + 1, 1, return_list[0].item())
 
             return_g2 = 0
             T2 = len(reward2_list)
@@ -501,7 +492,6 @@ class MOMPRDSE:
                 return_g2 = reward2_list[T2 - 1 - t] + self.GEMA * return_g2
                 return2_list.append(torch.tensor(return_g2).reshape(1))
             return2_list.reverse()
-            self.worksheet.write(period + 1, 3, return2_list[0].item())
 
             return_g3 = 0
             T3 = len(reward3_list)
@@ -509,7 +499,6 @@ class MOMPRDSE:
                 return_g3 = reward3_list[T3 - 1 - t] + self.GEMA * return_g3
                 return3_list.append(torch.tensor(return_g3).reshape(1))
             return3_list.reverse()
-            self.worksheet.write(period + 1, 5, return3_list[0].item())
 
             sample = {
                 "reward": reward,
@@ -597,7 +586,7 @@ class MOMPRDSE:
                 loss = loss / self.BATCH_SIZE
 
                 # logger.info(f"loss:{loss}")
-                self.worksheet.write(int(period / self.BATCH_SIZE) + 1, 2, loss.item())
+
                 self.policy_optimizer.zero_grad()
                 loss.backward()
                 self.policy_optimizer.step()
@@ -634,8 +623,7 @@ class MOMPRDSE:
                     loss2 = loss2 + sample2_loss
                 loss2 = loss2 / self.BATCH_SIZE
 
-                # logger.info(f"loss:{loss}")
-                self.worksheet.write(int(period / self.BATCH_SIZE) + 1, 4, loss2.item())
+
                 self.policy_optimizer_2.zero_grad()
                 loss2.backward()
                 self.policy_optimizer_2.step()
@@ -672,8 +660,6 @@ class MOMPRDSE:
                     loss3 = loss3 + sample3_loss
                 loss3 = loss3 / self.BATCH_SIZE
 
-                # logger.info(f"loss:{loss}")
-                self.worksheet.write(int(period / self.BATCH_SIZE) + 1, 6, loss3.item())
                 self.policy_optimizer_3.zero_grad()
                 loss3.backward()
                 self.policy_optimizer_3.step()
@@ -686,28 +672,16 @@ class MOMPRDSE:
                print("no avaiable sample")
             period = period + 1
         # end for-period
-        self.workbook.save("record/new_reward&return/RLDSE_reward_record_old.xls")
+
         print(f"stack_renew {stack_renew}")
 
-    def test(self):
-        pass
-        # for period in range(1):
-        # 	for step in range(self.DSE_action_space.get_lenth()):
-        #
-        # 		action, _ = self.actor.action_choose_with_no_grad_3(self.policyfunction,self.policyfunction_2,self.policyfunction_3, self.DSE_action_space, step,555,is_train = False)
-        #
-        # 		self.fstatus = self.DSE_action_space.sample_one_dimension(step, action)
-        # 	self.evaluation.update_parameter(self.fstatus)
-        # 	self.fruntime, t_L = self.evaluation.runtime()
-        # 	self.fruntime = self.fruntime * 1000
-        # 	self.fpower = self.evaluation.power()
-        # 	logger.info(
-        # 		"\n@@@@  TEST  @@@@\n",
-        # 		"final_status\n", self.fstatus,
-        # 		"\nfinal_runtime\n", self.fruntime,
-        # 		"\npower\n", self.fpower,
-        # 		"\nbest_time\n", self.best_objectvalue_list[-1]
-        # 	)
+    def save_record(self):
+        np.savetxt("record/momprdse_reward.csv", np.stack((self.reward_array,self.reward2_array,self.reward3_array),axis=1), delimiter=',', fmt='%f')
+        np.savetxt("record/momprdse_detail.csv", np.stack((self.all_objectvalue,self.all_objectvalue2),axis=1), delimiter=',', fmt='%f')
+        obs_array = pd.DataFrame(self.design_point_array)
+        obs_array.to_csv("record/momprdse_obs.csv",header=None,index=None)
+        metric_array = pd.DataFrame(self.metric_array)
+        metric_array.to_csv("record/momprdes_metric.csv",header = None, index = None)
 
 
 def run(iindex):
@@ -716,69 +690,8 @@ def run(iindex):
     DSE = MOMPRDSE(iindex)
     print(f"DSE scale:{DSE.DSE_action_space.get_scale()}")
     DSE.train()
-    DSE.test()
+    DSE.save_record()
 
-    workbook = xlwt.Workbook(encoding="ascii")
-    worksheet = workbook.add_sheet("1")
-    worksheet.write(0, 0, "index")
-    worksheet.write(0, 1, "runtime")
-    for index, best_objectvalue in enumerate(DSE.best_objectvalue_list):
-        worksheet.write(index + 1, 0, index + 1)
-        worksheet.write(index + 1, 1, best_objectvalue)
-    name = ("record/objectvalue_double_three_policy/"+"_"+"MOMPRDSE"+"_"+\
-        "runtime"+str(iindex)+"500"+".xls")
-    workbook.save(name)
-
-    workbook = xlwt.Workbook(encoding="ascii")
-    worksheet = workbook.add_sheet("1")
-    worksheet.write(0, 0, "index")
-    worksheet.write(0, 1, "power")
-    for index, best_objectvalue in enumerate(DSE.best_objectvalue2_list):
-        worksheet.write(index + 1, 0, index + 1)
-        worksheet.write(index + 1, 1, best_objectvalue)
-    name = (
-        "record/objectvalue_double_three_policy/"
-        + "_"
-        + "MOMPRDSE"
-        + "_"
-        + "power"
-        + str(iindex)
-        + "500"
-        + ".xls"
-    )
-    workbook.save(name)
-
-    workbook2 = xlwt.Workbook(encoding="ascii")
-    worksheet2 = workbook2.add_sheet("1")
-    worksheet2.write(0, 0, "index")
-    worksheet2.write(0, 1, "objectvalue1")
-    worksheet2.write(0, 2, "objectvalue2")
-    for index, objectvalue in enumerate(DSE.all_objectvalue):
-        worksheet2.write(index + 1, 0, index + 1)
-        worksheet2.write(index + 1, 1, objectvalue)
-    for index, objectvalue in enumerate(DSE.all_objectvalue2):
-        worksheet2.write(index + 1, 2, objectvalue)
-    name = (
-        "record/objectvalue_double_three_policy/"
-        + "_"
-        + "MOMPRDSE"
-        + "_"
-        + str(iindex)
-        + "all_value"
-        + "500"
-        + ".xls"
-    )
-    workbook2.save(name)
-
-    """
-	tsne3D(DSE.action_array, DSE.reward_array, "ERDSE" + "_" + DSE.nnmodel + "_" + DSE.target)
-	high_value_reward = 0
-	for reward in DSE.reward_array:
-		if(reward >= 10): high_value_reward += 1
-	high_value_reward_proportion = high_value_reward/len(DSE.reward_array)
-	hfile = open("high_value_reward_proportion_"+str(iindex)+".txt", "w")
-	logger.info(f"@@@@high-value design point proportion:{high_value_reward_proportion}@@@@", file=hfile)
-	"""
     print(f"%%%%TEST{iindex} END%%%%")
 
 

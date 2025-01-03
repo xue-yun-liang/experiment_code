@@ -14,6 +14,6 @@ constraints:
   cloud: {AREA: 400, POWER: 500}
   embed: {AREA: 50, POWER: 20}
 
-target: normal  # specific platform, e.g. normal, cloud, embed
+target: cloud  # specific platform, e.g. normal, cloud, embed
 goal: latency   # Actual optimization objectives, e.g. latency, energy, latency&energy
 th_ratio: 2     # A hyperparameter in reward function which used to control reward values

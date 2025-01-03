@@ -5,8 +5,8 @@ from multiprocessing import Pool
 
 import gym
 import numpy as np
+import pandas as pd
 import torch
-import xlwt
 import yaml
 import sys
 
@@ -36,7 +36,7 @@ class RIDSE:
         random.seed(seed)
 
         # set config, design space and constraints
-        with open('/app/CRLDSE/util/config.yaml', 'r') as file:
+        with open('util/config.yaml', 'r') as file:
             config_data = yaml.safe_load(file)
 
         self.config = config_self_new(config_data)
@@ -51,7 +51,7 @@ class RIDSE:
         self.BATCH_SIZE = 1
         self.BASE_LINE = 0
         self.ENTROPY_RATIO = 0
-        self.PERIOD_BOUND = 500
+        self.PERIOD_BOUND = 1   # set epochs
 
         # initial mlp_policyfunction, every action dimension owns a policyfunction
         action_scale_list = list()
@@ -99,6 +99,8 @@ class RIDSE:
 
         self.action_array = list()
         self.reward_array = list()
+        self.desin_point_array = list()
+        self.metric_array = list()
         self.noise_std = 0.01
 
 
@@ -137,6 +139,7 @@ class RIDSE:
                 self.DSE_action_space.sample_one_dimension(step, action)
                 next_status = self.DSE_action_space.get_status()
                 print("next_status:",next_status)
+                objectvalue = 0
 
                 #### in MC method, we can only sample in last step
                 # and compute reward R
@@ -149,6 +152,8 @@ class RIDSE:
                 else:
                     
                     metrics = self.evaluation.eval(next_status.values())
+                    self.desin_point_array.append(next_status.values())
+                    self.metric_array.append(metrics)
                     if metrics != None:
 
                         energy = metrics["latency"]
@@ -157,11 +162,13 @@ class RIDSE:
                         power = metrics["power"]
                         self.constraints.update({"AREA": area, "POWER": power})
 
-                        reward = 1000 / (runtime * self.constraints.get_punishment())
+                        reward = 1000 / (runtime * 100000 * self.constraints.get_punishment())
                         objectvalue = runtime
                         objectvalue2 = power
                     else:
                         reward = 0
+                        power = 0
+
 
                     #### recording
                     if (
@@ -214,7 +221,6 @@ class RIDSE:
             if period % self.BATCH_SIZE == 0:
                 loss = loss / self.BATCH_SIZE
                 # logger.info(f"entropy_loss:{entropy_loss}")
-                # self.worksheet.write(int(period / self.BATCH_SIZE) + 1, 2, loss.item())
                 self.policy_optimizer.zero_grad()
                 loss.backward()
                 self.policy_optimizer.step()
@@ -228,6 +234,11 @@ class RIDSE:
     def save_record(self):
         np.savetxt("record/ri_reward.csv", self.reward_array, delimiter=',', fmt='%f')
         np.savetxt("record/ri_detail.csv", np.stack((self.all_objectvalue,self.all_objectvalue2),axis=1), delimiter=',', fmt='%f')
+        obs_array = pd.DataFrame(self.desin_point_array)
+        obs_array.to_csv("record/ri_obs.csv",header = None, index = None)
+        metric_array = pd.DataFrame(self.metric_array)
+        metric_array.to_csv("record/ri_metric.csv",header = None, index = None)
+
 
 # running the main loop of the algorithms
 def run(iindex):
