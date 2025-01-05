@@ -5,7 +5,7 @@ os.environ["NUMEXPR_NUM_THREADS"] = "1"
 os.environ["OMP_NUM_THREADS"] = "1" 
 
 proms = [
-	"test_REINFORCE.py",
+	"test_CRLDSE.py",
 	"test_ERDSE.py",
 	"test_MOMPRDSE.py",
 ]

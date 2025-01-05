@@ -233,12 +233,12 @@ class RIDSE:
 
     # end def-train
     def save_record(self):
-        np.savetxt("record/ri_reward.csv", self.reward_array, delimiter=',', fmt='%f')
-        np.savetxt("record/ri_detail.csv", np.stack((self.all_objectvalue,self.all_objectvalue2),axis=1), delimiter=',', fmt='%f')
+        np.savetxt("record/crldse_reward.csv", self.reward_array, delimiter=',', fmt='%f')
+        np.savetxt("record/crldse_detail.csv", np.stack((self.all_objectvalue,self.all_objectvalue2),axis=1), delimiter=',', fmt='%f')
         obs_array = pd.DataFrame(self.desin_point_array)
-        obs_array.to_csv("record/ri_obs.csv",header = None, index = None)
+        obs_array.to_csv("record/crldse_obs.csv",header = None, index = None)
         metric_array = pd.DataFrame(self.metric_array)
-        metric_array.to_csv("record/ri_metric.csv",header = ['latency','Area','energy','power'], index = None)
+        metric_array.to_csv("record/crldse_metric.csv",header = ['latency','Area','energy','power'], index = None)
 
 
 # running the main loop of the algorithms
