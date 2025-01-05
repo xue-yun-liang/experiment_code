@@ -51,7 +51,7 @@ class RIDSE:
         self.BATCH_SIZE = 1
         self.BASE_LINE = 0
         self.ENTROPY_RATIO = 0
-        self.PERIOD_BOUND = 1   # set epochs
+        self.PERIOD_BOUND = 500   # set epochs
 
         # initial mlp_policyfunction, every action dimension owns a policyfunction
         action_scale_list = list()
