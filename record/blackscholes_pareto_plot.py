@@ -66,21 +66,25 @@ def plot_pareto_front(data1, data2, data3,names):
     combined_data = pd.concat([data1, data2, data3], ignore_index=True)
     plt.scatter(combined_data[x_label], combined_data[y_label], color='lightgray', label='all data',alpha=0.3)
 
+    # plt.scatter(pareto_front1[x_label], pareto_front1[y_label], color='red', marker='x', label=name1)
+    # plt.scatter(pareto_front2[x_label], pareto_front2[y_label], color='blue', marker='^', label=name2,facecolors='none')
+    # plt.scatter(pareto_front3[x_label], pareto_front3[y_label], color='green', marker='+', label=name3)
     plt.scatter(pareto_front1[x_label], pareto_front1[y_label], color='red', marker='x', label=name1)
     plt.scatter(pareto_front2[x_label], pareto_front2[y_label], color='blue', marker='^', label=name2,facecolors='none')
+    
     plt.scatter(pareto_front3[x_label], pareto_front3[y_label], color='green', marker='+', label=name3)
     
     # 添加图例和标签
     plt.legend()
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    plt.savefig('pareto.png', format='png',dpi=600)
+    plt.savefig('blackscholes_pareto.png', format='png',dpi=600)
 
 if __name__ == "__main__":
     # load data
-    crldse_metric_df = pd.read_csv('../data/cloud/crldse_metric.csv')
-    erdse_metric_df = pd.read_csv('../data/cloud/erdse_metric.csv')
-    momprdse_metric_df = pd.read_csv('../data/cloud/momprdes_metric.csv')
+    crldse_metric_df = pd.read_csv('../data/normal/blackscholes/blackscholes_crldse_metric.csv')
+    erdse_metric_df = pd.read_csv('../data/normal/blackscholes/blackscholes_erdse_metric.csv')
+    momprdse_metric_df = pd.read_csv('../data/normal/blackscholes/blackscholes_momprdes_metric.csv')
     crldse_power_latency = crldse_metric_df[["power","latency"]]
     erdse_power_latency = erdse_metric_df[["power","latency"]]
     momprdse_power_latency = momprdse_metric_df[["power","latency"]]
