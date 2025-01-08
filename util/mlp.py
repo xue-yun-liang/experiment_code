@@ -1,5 +1,21 @@
 import torch
 
+class mlp(torch.nn.Module):
+	def __init__(self, space_lenth):
+		super(mlp_qfunction, self).__init__()
+		self.space_lenth = space_lenth
+		self.fc = torch.nn.Linear(256, 128)
+		self.fc1 = torch.nn.Linear(self.space_lenth+1, 256)
+		self.fc2 = torch.nn.Linear(128, 64)
+		self.fc3 = torch.nn.Linear(64, 1)
+
+	def forward(self, input):
+		pass
+		# out1 = torch.nn.functional.relu(self.fc1(input))
+		# out1 = torch.nn.functional.relu(self.fc(out1))
+		# out2 = torch.nn.functional.relu(self.fc2(out1))
+		# return self.fc3(out2)
+
 class mlp_qfunction(torch.nn.Module):
 	def __init__(self, space_lenth):
 		super(mlp_qfunction, self).__init__()

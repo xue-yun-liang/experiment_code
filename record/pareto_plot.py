@@ -46,22 +46,18 @@ def pareto_front(df):
     return pareto_front_df
 
 def plot_pareto_front(data1, data2, data3,names):
-    # 计算每个数据集的帕累托前沿
     pareto_front1 = pareto_front(data1)
     pareto_front2 = pareto_front(data2)
     pareto_front3 = pareto_front(data3)
-    print(pareto_front1)
     d, bes_p = select_and_calculate_distances([pareto_front1,pareto_front2,pareto_front3])
     d = pd.DataFrame(d)
-    print(d)
+    print("ADRS:", d)
 
     name1, name2, name3 = names[0], names[1], names[2]
     
-    # 获取标签
     x_label, y_label = data1.columns[:2]
     x_label, y_label = y_label, x_label
     
-    # 绘制数据点和帕累托前沿点
     plt.ylim(-5,60)
     combined_data = pd.concat([data1, data2, data3], ignore_index=True)
     plt.scatter(combined_data[x_label], combined_data[y_label], color='lightgray', label='all data',alpha=0.3)
@@ -70,7 +66,6 @@ def plot_pareto_front(data1, data2, data3,names):
     plt.scatter(pareto_front2[x_label], pareto_front2[y_label], color='blue', marker='^', label=name2,facecolors='none')
     plt.scatter(pareto_front3[x_label], pareto_front3[y_label], color='green', marker='+', label=name3)
     
-    # 添加图例和标签
     plt.legend()
     plt.xlabel(x_label)
     plt.ylabel(y_label)
@@ -78,9 +73,9 @@ def plot_pareto_front(data1, data2, data3,names):
 
 if __name__ == "__main__":
     # load data
-    crldse_metric_df = pd.read_csv('../data/cloud/crldse_metric.csv')
-    erdse_metric_df = pd.read_csv('../data/cloud/erdse_metric.csv')
-    momprdse_metric_df = pd.read_csv('../data/cloud/momprdes_metric.csv')
+    crldse_metric_df = pd.read_csv('../data/canneal_normal_crldse.csv')
+    erdse_metric_df = pd.read_csv('../data/canneal_normal_erdse.csv')
+    momprdse_metric_df = pd.read_csv('../data/canneal_normal_momprdse.csv')
     crldse_power_latency = crldse_metric_df[["power","latency"]]
     erdse_power_latency = erdse_metric_df[["power","latency"]]
     momprdse_power_latency = momprdse_metric_df[["power","latency"]]
