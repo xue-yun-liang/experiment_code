@@ -55,9 +55,20 @@ MPTABLE: OEM ID:
 MPTABLE: Product ID: 
 MPTABLE: APIC at: 0xFEE00000
 Processor #0 (Bootup-CPU)
-I/O APIC #1 Version 17 at 0xFEC00000.
-Processors: 1
-SMP: Allowing 1 CPUs, 0 hotplug CPUs
+Processor #1
+Processor #2
+Processor #3
+Processor #4
+Processor #5
+Processor #6
+Processor #7
+Processor #8
+Processor #9
+Processor #10
+Processor #11
+I/O APIC #12 Version 17 at 0xFEC00000.
+Processors: 12
+SMP: Allowing 12 CPUs, 0 hotplug CPUs
 Allocating PCI resources starting at c4000000 (gap: c0000000:3fff0000)
 PERCPU: Allocating 53248 bytes of per cpu data
 Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 127107
@@ -72,15 +83,13 @@ Dentry cache hash table entries: 65536 (order: 7, 524288 bytes)
 Inode-cache hash table entries: 32768 (order: 6, 262144 bytes)
 Checking aperture...
 No AGP bridge found
-Memory: 506260k/524288k available (4219k kernel code, 388k absent, 16988k reserved, 2101k data, 332k init)
+Memory: 505748k/524288k available (4219k kernel code, 388k absent, 17560k reserved, 2101k data, 332k init)
 Calibrating delay loop (skipped) preset value.. 3999.96 BogoMIPS (lpj=7999923)
 Mount-cache hash table entries: 256
 CPU: L1 I Cache: 64K (64 bytes/line), D cache 64K (64 bytes/line)
 CPU: L2 Cache: 1024K (64 bytes/line)
 using mwait in idle threads.
-SMP alternatives: switching to UP code
-Freeing SMP alternatives: 34k freed
-Setting APIC routing to flat
+Setting APIC routing to physical flat
 ExtINT not setup in hardware but reported by MP table
 ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=0 pin2=0
 CPU0: HygonGenuine Fake M5 x86_64 CPU stepping 01

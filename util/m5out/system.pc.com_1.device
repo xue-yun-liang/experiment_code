@@ -215,17 +215,11 @@ usage: /sbin/m5 exit [delay]
 All times in nanoseconds!
 PARSEC Benchmark Suite Version 2.1
 [HOOKS] PARSEC Hooks Version 1.2
-Threadcount: 4
-100 swaps per temperature step
-start temperature: 300
-netlist filename: /parsec/install/inputs/canneal/100.nets
-number of temperature steps: 2
-locs created
-locs assigned
-netlist created. 100 elements.
+Num of Options: 16
+Num of Runs: 100
+Size of data: 640
 [HOOKS] Entering ROI
 [HOOKS] Leaving ROI
-Final routing is: 4522
-[HOOKS] Total time spent in ROI: 0.000s
+[HOOKS] Total time spent in ROI: 0.004s
 [HOOKS] Terminating
 Done :D

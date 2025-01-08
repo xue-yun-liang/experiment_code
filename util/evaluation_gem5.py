@@ -157,7 +157,7 @@ def run_gem5_sim(obs, sim_config):
     print(obs)
     """sim step1: pass the design parameters of the state to gem5"""
     # if the cache size is too small, mcpat will return error
-    # so, need to give a new lower bound or if we get error, give a done for env
+    # so, need to give a new lower bound or if got error, give a low reward
     cmd = "/app/gem5/build/X86/gem5.fast -re /app/gem5/configs/deprecated/example/fs.py \
         --script=/app/parsec-image/benchmark_src/blackscholes_{}c_simdev.rcS -F 5000000000 \
         --cpu-type=TimingSimpleCPU --num-cpus={} --sys-clock={}GHz --caches --l2cache \

@@ -24,7 +24,7 @@ from recorder import recorder
 
 debug = False
 
-class RIDSE:
+class CRLDSE:
     def __init__(self, iindex):
 
         self.iindex = iindex
@@ -262,7 +262,7 @@ class RIDSE:
 # running the main loop of the algorithms
 def run(iindex):
     print(f"---------------TEST{iindex} START---------------")
-    DSE = RIDSE(iindex)
+    DSE = CRLDSE(iindex)
     DSE.train()
     DSE.save_record()
     print(f"---------------TEST{iindex} END---------------")
