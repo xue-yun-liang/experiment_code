@@ -11,7 +11,7 @@ from sklearn import manifold
 import matplotlib.pyplot as plt
 
 #from evaluation import evaluation_function
-from evaluation_maestro import evaluation_maestro
+
 
 def find_divisor(number):
     number = int(number)

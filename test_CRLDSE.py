@@ -248,9 +248,8 @@ class CRLDSE:
                 loss = torch.tensor(0)
                 batch_index = 0
         # end for-period
-
-
     # end def-train
+
     def save_record(self):
         reward_array = pd.DataFrame(self.reward_array,columns="reward")
         obs_array = pd.DataFrame(self.desin_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
