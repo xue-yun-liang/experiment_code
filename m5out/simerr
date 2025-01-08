@@ -16,3 +16,151 @@ build/X86/arch/x86/generated/exec-ns.cc.inc:27: warn: instruction 'wbinvd' unimp
 src/arch/x86/cpuid.cc:185: warn: x86 cpuid: unknown family 0x4000
 src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
 src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 5
+src/sim/power_state.cc:105: warn: PowerState: Already in the requested power state, request ignored
+build/X86/arch/x86/generated/exec-ns.cc.inc:27: warn: instruction 'wbinvd' unimplemented
+src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
+src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
+src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
+src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
+src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
+src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
+src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
+src/arch/x86/cpuid.cc:180: warn: x86 cpuid family 0x0000: unimplemented function 6
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/dev/ps2/mouse.cc:151: warn: Unknown mouse command 0xe1.
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/arch/generic/debugfaults.hh:145: warn: MOVNTI: Ignoring non-temporal hint, modeling as cacheable!
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
+src/sim/simulate.cc:194: info: Entering event queue @ 4863980132000.  Starting simulation...
