@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 #from evaluation import evaluation_function
 from evaluation_gem5 import evaluation_gem5
-from evaluation_maestro import evaluation_maestro
+
 
 def find_divisor(number):
     number = int(number)
@@ -966,7 +966,7 @@ class environment_gem5():
         pi[idx] = 1
         return pi
     
-    def env_save_record(self, algo_name):
+    def env_save_record(self):
         reward_array = pd.DataFrame(self.reward_array,columns=["reward"])
         obs_array = pd.DataFrame(self.design_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
         metric_array = pd.DataFrame(self.metric_array,columns=['latency','Area','energy','power'])

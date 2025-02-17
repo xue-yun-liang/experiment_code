@@ -331,6 +331,7 @@ def sac(iindex,  actor_critic=core_sac.MLPActorCritic_DSE,
                 batch = replay_buffer.sample_batch(batch_size)
                 update(data=batch)
         # End of epoch handling
+    env.env_save_record()
     tm.end("all")
     return env.best_objectvalue_list, env.multiobjecvalue_list, tm
 

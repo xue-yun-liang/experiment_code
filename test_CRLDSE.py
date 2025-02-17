@@ -14,8 +14,8 @@ import sys
 from config import config_global
 sys.path.append("./util/")
 from space import dimension_discrete, design_space, create_space_gem5
-from actor import actor_policyfunction, get_log_prob, get_log_prob_rnn
-from mlp import mlp_policyfunction, rnn_policyfunction
+from actor import actor_policyfunction, get_log_prob, get_log_prob_rnn, self_attention, seq_len_encoder
+from mlp import mlp_policyfunction, rnn_policyfunction, mlp
 from evaluation_gem5 import evaluation_gem5
 from config_analyzer import config_self,config_self_new
 from timer import timer
@@ -24,10 +24,11 @@ from recorder import recorder
 
 debug = False
 
-class RIDSE:
+class CRLDSE:
     def __init__(self, iindex):
 
         self.iindex = iindex
+        self.algo = 'crldse'
 
         # random seed setting
         seed = self.iindex * 10000
@@ -74,6 +75,20 @@ class RIDSE:
             "sys_clock": 2,
         }
         self.evaluation = evaluation_gem5(default_state)
+
+
+
+        embed_size = 256
+        heads = 8
+        batch_size = 32
+        seq_len = 10
+        num_layer_gru = 3
+
+        # set models
+        self.status_encoder = self_attention(embed_size, heads)
+        # self.context_encoder = mlp(self.DSE_action_space.get_lenth())
+        self.seq_len_encoder = seq_len_encoder(16, embed_size, num_layer_gru, 16)
+
 
         # set pytorch optimizers
         self.policy_optimizer = torch.optim.Adam(self.policyfunction.parameters(),lr=self.ALPHA)
@@ -127,11 +142,16 @@ class RIDSE:
             for step in range(self.DSE_action_space.get_lenth()):
                 # get status from S
                 current_status = self.DSE_action_space.get_status()
+                v = current_status.values()
+                v = torch.Tensor(list(v))
+                a = self.status_encoder(v,v,v, mask = None)
 
                 # use policy function to choose action and acquire log_prob
                 entropy, action, log_prob_sampled = self.actor.action_choose(
                     self.policyfunction, self.DSE_action_space, current_status,dimension_index=step
                 )
+                
+                # out = self.context_encoder(a)
                 entropy_list.append(entropy)
                 log_prob_list.append(log_prob_sampled)
 
@@ -229,20 +249,21 @@ class RIDSE:
                 loss = torch.tensor(0)
                 batch_index = 0
         # end for-period
-
-
     # end def-train
+
     def save_record(self):
-        reward_array = pd.DataFrame(self.reward_array,columns="reward")
+        reward_array = pd.DataFrame(self.reward_array,columns=["reward"])
         obs_array = pd.DataFrame(self.desin_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
         metric_array = pd.DataFrame(self.metric_array,columns=['latency','Area','energy','power'])
-        result_df = pd.concat(reward_array,obs_array,metric_array)
-        result_df.to_csv("../data/blackscholes_cloud_crldse.csv")
+        result_df = pd.concat([reward_array,obs_array,metric_array],axis=1)
+        result_df.to_csv(f"./data/{self.config.benchmark}_{self.config.target}_{self.algo}.csv")
+
+
 
 # running the main loop of the algorithms
 def run(iindex):
     print(f"---------------TEST{iindex} START---------------")
-    DSE = RIDSE(iindex)
+    DSE = CRLDSE(iindex)
     DSE.train()
     DSE.save_record()
     print(f"---------------TEST{iindex} END---------------")

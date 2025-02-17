@@ -326,7 +326,7 @@ def ppo(iindex, actor_critic=core_ppo.MLPActorCritic_DSE,
 
         # Perform PPO update!
         update()
-    env.env_save_record("ppo")
+    env.env_save_record()
     tm.end("all")
 
     return env.best_objectvalue_list, env.multiobjecvalue_list, tm

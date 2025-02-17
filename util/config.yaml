@@ -9,7 +9,6 @@ design_space:
   sys_clock: {default_val: 2,step: 0.1,rrange: [2,4]}
 
 constraints:
-  # FIXME: give more reasonable value
   normal: {AREA: 100, POWER: 60}
   cloud: {AREA: 400, POWER: 500}
   embed: {AREA: 50, POWER: 20}

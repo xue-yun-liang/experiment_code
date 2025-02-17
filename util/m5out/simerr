@@ -7,8 +7,8 @@ warn: No dot file generated. Please install pydot to generate the dot file and p
 src/mem/dram_interface.cc:690: warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
 src/sim/kernel_workload.cc:46: info: kernel located at: /app/parsec-image/system/binaries/x86_64-vmlinux-2.6.28.4-smp
 src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
-system.pc.com_1.device: Listening for connections on port 3456
-system.remote_gdb: Listening for connections on port 7000
+system.pc.com_1.device: Listening for connections on port 3459
+system.remote_gdb: Listening for connections on port 7003
 src/dev/intel_8254_timer.cc:128: warn: Reading current count from inactive timer.
 src/sim/simulate.cc:194: info: Entering event queue @ 0.  Starting simulation...
 src/dev/x86/pc.cc:117: warn: Don't know what interrupt to clear for console.
@@ -159,7 +159,4 @@ src/sim/power_state.cc:118: warn: PowerState: More than one power state change r
 src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
 src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
 src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
-src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
-src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
-src/sim/power_state.cc:118: warn: PowerState: More than one power state change request encountered within the same simulation tick
-src/sim/simulate.cc:194: info: Entering event queue @ 4798423169500.  Starting simulation...
+src/sim/simulate.cc:194: info: Entering event queue @ 4800282157000.  Starting simulation...
