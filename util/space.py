@@ -327,7 +327,7 @@ class design_space():
 
     #### for CSDSE
     def corr_analysis(self, filepath, threshold = 0.1):
-        corr_table_dataframe = pandas.read_csv(filepath)
+        corr_table_dataframe = pd.read_csv(filepath)
         corr_table = corr_table_dataframe.iloc[0::].values.tolist()
         corr_index_table = []
         for corr_list in corr_table:
@@ -1049,8 +1049,8 @@ def tsne2D_fromfile(obs_file_list, reward_file_list, has_interval=False, interva
     all_obs_list = list()
     all_reward_list = list()
     for obs_file, reward_file in zip(obs_file_list, reward_file_list):
-        obs_list = pandas.read_csv(obs_file).values.tolist()
-        reward_list = pandas.read_csv(reward_file).values.tolist()
+        obs_list = pd.read_csv(obs_file).values.tolist()
+        reward_list = pd.read_csv(reward_file).values.tolist()
         all_obs_list = all_obs_list + obs_list
         all_reward_list = all_reward_list + reward_list
 
