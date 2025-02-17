@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import yaml
 from subprocess import Popen
 
 import numpy as np
@@ -156,14 +157,16 @@ def getTimefromStats(statsFile):
 def run_gem5_sim(obs, sim_config):
     print(obs)
     """sim step1: pass the design parameters of the state to gem5"""
+    with open('util/config.yaml', 'r') as file:
+        config_data = yaml.safe_load(file)
     # if the cache size is too small, mcpat will return error
     # so, need to give a new lower bound or if we get error, give a done for env
     cmd = "/app/gem5/build/X86/gem5.fast -re /app/gem5/configs/deprecated/example/fs.py \
-        --script=/app/parsec-image/benchmark_src/blackscholes_{}c_simdev.rcS -F 5000000000 \
+        --script=/app/parsec-image/benchmark_src/{}_{}c_simdev.rcS -F 5000000000 \
         --cpu-type=TimingSimpleCPU --num-cpus={} --sys-clock={}GHz --caches --l2cache \
         --l1d_size={}kB --l1i_size={}kB --l2_size={}kB --l1d_assoc={} --l1i_assoc={} \
         --l2_assoc={} --kernel=/app/parsec-image/system/binaries/x86_64-vmlinux-2.6.28.4-smp \
-        --disk-image=/app/parsec-image/system/disks/x86root-parsec.img".format(
+        --disk-image=/app/parsec-image/system/disks/x86root-parsec.img".format(config_data["benchmark"],
         obs["core"], obs["core"], obs["sys_clock"], obs["l1d_size"], obs["l1i_size"],
         obs["l2_size"], obs["l1d_assoc"], obs["l1i_assoc"],obs["l2_assoc"])
     print(cmd)

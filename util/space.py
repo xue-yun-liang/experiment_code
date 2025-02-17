@@ -4,13 +4,14 @@ import random
 import pdb
 import os
 import time
-import pandas
+import pandas as pd
 
 import numpy as np
 from sklearn import manifold
 import matplotlib.pyplot as plt
 
 #from evaluation import evaluation_function
+from evaluation_gem5 import evaluation_gem5
 from evaluation_maestro import evaluation_maestro
 
 def find_divisor(number):
@@ -244,32 +245,36 @@ class design_space():
         return obs
 
     def get_compact_obs(self, dimension_index):
-        obs_list = list()
-        if(dimension_index < self.const_lenth):
-            layer_index = 0
-            layer = "Hardware"
-            temp_layer = self.layer_name[layer_index]
-        else:
-            layer_index = int((dimension_index - self.const_lenth)/self.dynamic_lenth)
-            layer = self.layer_name[layer_index]
+        # obs_list = list()
+        # if(dimension_index < self.const_lenth):
+        #     layer_index = 0
+        #     layer = "Hardware"
+        #     temp_layer = self.layer_name[layer_index]
+        # else:
+        #     layer_index = int((dimension_index - self.const_lenth)/self.dynamic_lenth)
+        #     layer = self.layer_name[layer_index]
 
-        const_range = range(0, self.const_lenth)
-        dynamic_range = range(self.const_lenth+layer_index*self.dynamic_lenth, self.const_lenth+(layer_index+1)*self.dynamic_lenth)
-        if(layer == "Hardware"):
-            for dindex in const_range:
-                item = self.dimension_box[dindex]
-                obs_list.append(item.get_norm_current_value())
-            for dindex in dynamic_range:
-                item = self.dimension_box[dindex]
-                obs_list.append(0)
-        else:
-            for dindex in const_range:
-                item = self.dimension_box[dindex]
-                obs_list.append(item.get_norm_current_value())
-            for dindex in dynamic_range:	
-                item = self.dimension_box[dindex]
-                obs_list.append(item.get_norm_current_value())
+        # const_range = range(0, self.const_lenth)
+        # dynamic_range = range(self.const_lenth+layer_index*self.dynamic_lenth, self.const_lenth+(layer_index+1)*self.dynamic_lenth)
+        # if(layer == "Hardware"):
+        #     for dindex in const_range:
+        #         item = self.dimension_box[dindex]
+        #         obs_list.append(item.get_norm_current_value())
+        #     for dindex in dynamic_range:
+        #         item = self.dimension_box[dindex]
+        #         obs_list.append(0)
+        # else:
+        #     for dindex in const_range:
+        #         item = self.dimension_box[dindex]
+        #         obs_list.append(item.get_norm_current_value())
+        #     for dindex in dynamic_range:	
+        #         item = self.dimension_box[dindex]
+        #         obs_list.append(item.get_norm_current_value())
+        obs_list = list()
+        for item in self.dimension_box:
+            obs_list.append(item.get_norm_current_value())
         obs = numpy.array(obs_list)
+        #obs = torch.from_numpy(obs)
         return obs
 
     def get_obs_dlrm(self):
@@ -688,6 +693,8 @@ def create_space_gem5(config_data):
             rrange=dimension_params['rrange'],
         )
         DSE_action_space.append(dimension)
+    DSE_action_space.const_lenth = 8
+    DSE_action_space.dynamic_lenth = 0
 
     return DSE_action_space
 
@@ -801,6 +808,171 @@ class environment_maestro():
         pi = torch.zeros(int(self.design_space.get_dimension_scale(step)))
         pi[idx] = 1
         return pi
+
+class environment_gem5():
+    def __init__(self, algo, iindex, config, config_data, test = False, delay_reward = True):
+        self.target = config.target
+        self.constraints = config.constraints
+        self.iindex = iindex
+        self.algo = algo
+        self.test = test
+        self.delay_reward = delay_reward
+        self.pid = os.getpid()
+        self.benckmark = config_data['benchmark']
+                
+        self.best_objectvalue = 1000
+        self.best_objectvalue_list = list()
+        self.multiobjecvalue_list = list()
+
+        self.design_space = create_space_gem5(config_data)
+        ##initial evaluation
+        default_state = {
+            "core": 3,
+            "l1i_size": 256,
+            "l1d_size": 256,
+            "l2_size": 64,
+            "l1d_assoc": 8,
+            "l1i_assoc": 8,
+            "l2_assoc": 8,
+            "sys_clock": 2,
+        }
+        self.evaluation = evaluation_gem5(default_state)
+
+        self.design_space_dimension = self.design_space.get_lenth()
+        self.action_dimension_list = self.design_space.get_dimension_scale_list(has_upbound = True)
+        self.action_limit_list = self.design_space.get_dimension_scale_list(has_upbound = False)
+
+        self.const_lenth = self.design_space.const_lenth
+        self.dynamic_lenth = self.design_space.dynamic_lenth
+        self.compact_obs_action_dimension_list = list()
+        print(self.action_dimension_list)
+        for index in range(self.const_lenth + self.dynamic_lenth):
+            self.compact_obs_action_dimension_list.append(self.action_dimension_list[index])
+
+        self.metric_array = list()
+        self.reward_array = list()
+        self.design_point_array = list()
+
+    def reset(self):
+        self.design_space.status_reset()
+        #return self.design_space.get_obs()
+        return self.design_space.get_compact_obs(0)
+
+    def step(self, step, act, deterministic=False):
+        if(deterministic):
+            if(torch.is_tensor(act)): act = torch.argmax(act, dim=-1).item()
+            else: act = torch.argmax(torch.as_tensor(act).view(-1), dim=-1).item()
+        else:
+            if(self.algo == "sac"):
+                if(torch.is_tensor(act)): 
+                    act = torch.softmax(act, dim = -1)
+                    act = int(act.multinomial(num_samples = 1).data.item())
+                if(isinstance(act, numpy.ndarray)):
+                    act = torch.as_tensor(act, dtype=torch.float32).view(-1)
+                    act = torch.softmax(act, dim = -1)
+                    act = int(act.multinomial(num_samples = 1).data.item())
+            elif(self.algo == "ppo"):
+                pass
+            elif(self.algo == "happo" or self.algo == "hasac"):
+                pass
+        
+        self.design_space.sample_one_dimension(step, act)
+        #obs = self.design_space.get_obs()
+        obs = self.design_space.get_compact_obs(step)
+
+        if(step < (self.design_space.get_lenth() - 1)):
+            not_done = 1
+        else:
+            not_done = 0
+        reward = float(0)
+        if(not_done):
+            if(self.delay_reward):
+                reward = float(0)
+            else:
+                all_status = self.design_space.get_status()
+                self.design_point_array.append(all_status.values())
+                print(all_status)
+                metrics = self.evaluation.evaluate(all_status.values())
+
+                if metrics != None:
+                    self.metric_array.append(metrics.values())
+                    energy = metrics["latency"]
+                    area = metrics["Area"]
+                    runtime = metrics["latency"]
+                    power = metrics["power"]
+                    self.constraints.update({"AREA": area, "POWER": power})
+
+                    reward = 1000 / (runtime * 100000 * self.constraints.get_punishment())
+                    objectvalue = runtime
+                    objectvalue2 = power
+                    self.reward_array.append(reward)
+                else:
+                    reward = 0
+                    power = 0
+                    self.metric_array.append([0,0,0,0])
+                    self.reward_array.append(reward)
+
+                print(f"objectvalue:{objectvalue}, reward:{reward}", end = '\r')
+
+                if(not self.test):
+                    if(objectvalue < self.best_objectvalue and self.constraints.is_all_meet()):
+                        self.best_objectvalue = objectvalue
+                    self.best_objectvalue_list.append(self.best_objectvalue)
+                    if metrics != None:
+                        self.multiobjecvalue_list.append([metrics["latency"], metrics["energy"]])
+        else:
+            all_status = self.design_space.get_status()
+            print("all_status:",all_status)
+            metrics = self.evaluation.eval(all_status.values())
+            self.design_point_array.append(all_status.values())
+            reward = float(0)
+            if metrics != None:
+                energy = metrics["latency"]
+                area = metrics["Area"]
+                runtime = metrics["latency"]
+                power = metrics["power"]
+                self.constraints.update({"AREA": area, "POWER": power})
+
+                reward = 1000 / (runtime * 100000 * self.constraints.get_punishment())
+                objectvalue = runtime
+                objectvalue2 = power
+                self.reward_array.append(reward)
+                self.metric_array.append(metrics.values())
+        
+            else:
+                reward = 0
+                power = 0
+                objectvalue = 0
+                self.metric_array.append([0,0,0,0])
+                self.reward_array.append(reward)
+
+            print(f"objectvalue:{objectvalue}, reward:{reward}", end = '\r')
+
+            if(not self.test):
+                if(objectvalue < self.best_objectvalue and self.constraints.is_all_meet()):
+                    self.best_objectvalue = objectvalue
+                self.best_objectvalue_list.append(self.best_objectvalue)
+                if metrics!=None:
+                    self.multiobjecvalue_list.append([metrics["latency"], metrics["energy"]])
+
+
+        done = not not_done
+
+        return obs, reward, done, {}
+
+    def sample(self, step):
+        idx = random.randint(0, self.design_space.get_dimension_scale(step)-1)
+        pi = torch.zeros(int(self.design_space.get_dimension_scale(step)))
+        pi[idx] = 1
+        return pi
+    
+    def env_save_record(self, algo_name):
+        reward_array = pd.DataFrame(self.reward_array,columns=["reward"])
+        obs_array = pd.DataFrame(self.design_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
+        metric_array = pd.DataFrame(self.metric_array,columns=['latency','Area','energy','power'])
+        result_df = pd.concat([reward_array,obs_array,metric_array], axis=1)
+        record_filename = f"./data/{self.benckmark}_{self.target}_{self.algo}.csv"
+        result_df.to_csv(record_filename)
 
 def tsne3D(vector_list, reward_list, method):
     action_array = np.array(vector_list)

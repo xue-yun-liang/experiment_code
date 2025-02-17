@@ -124,6 +124,7 @@ class config_self_new():
         self.target = config_data['target']
         self.goal = config_data['goal']
         self.th_ratio = config_data['th_ratio']
+        self.benchmark = config_data['benchmark']
         self.constraints = constraints()
 
         for constraint_name, value in config_data['constraints'][self.target].items():
@@ -138,7 +139,8 @@ class config_self_new():
         for constraint_ in self.constraints.constraint_list:
             print(f"{constraint_.get_name():<5}{constraint_.get_threshold():>5}")
         print(f"th_ratio:{self.th_ratio}")
-        print(f"goal:{self.goal}")	
+        print(f"goal:{self.goal}")
+        print(f'benchmark:{self.benchmark}')	
 
 
 if __name__ == "__main__":

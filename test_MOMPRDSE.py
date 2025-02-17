@@ -677,13 +677,11 @@ class MOMPRDSE:
         print(f"stack_renew {stack_renew}")
 
     def save_record(self):
-        np.savetxt("record/momprdse_reward.csv", np.stack((self.reward_array,self.reward2_array,self.reward3_array),axis=1), delimiter=',', fmt='%f')
-        np.savetxt("record/momprdse_detail.csv", np.stack((self.all_objectvalue,self.all_objectvalue2),axis=1), delimiter=',', fmt='%f')
-        obs_array = pd.DataFrame(self.design_point_array)
-        obs_array.to_csv("record/momprdse_obs.csv",header=None,index=None)
-        metric_array = pd.DataFrame(self.metric_array)
-        metric_array.to_csv("record/momprdes_metric.csv",header = ['latency','Area','energy','power'], index = None)
-
+        reward_array = pd.DataFrame(self.reward_array,columns="reward")
+        obs_array = pd.DataFrame(self.desin_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
+        metric_array = pd.DataFrame(self.metric_array,columns=['latency','Area','energy','power'])
+        result_df = pd.concat(reward_array,obs_array,metric_array)
+        result_df.to_csv("../data/blackscholes_cloud_momprdse.csv")
 
 def run(iindex):
     print(f"%%%%TEST{iindex} START%%%%")
