@@ -158,7 +158,7 @@ def run(iindex):
     obs_array = pd.DataFrame(desin_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
     metric_array = pd.DataFrame(metric_array,columns=['latency','Area','energy','power'])
     result_df = pd.concat([reward_array,obs_array,metric_array], axis=1)
-    result_df.to_csv("./data/blackscholes_test_nsga2.csv")
+    result_df.to_csv(f"./data/{config.benchmark}_{config.target}_nsga2.csv")
 
 if __name__ == '__main__':
     USE_MULTIPROCESS = False

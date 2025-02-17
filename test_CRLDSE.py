@@ -28,6 +28,7 @@ class CRLDSE:
     def __init__(self, iindex):
 
         self.iindex = iindex
+        self.algo = 'crldse'
 
         # random seed setting
         seed = self.iindex * 10000
@@ -251,11 +252,12 @@ class CRLDSE:
     # end def-train
 
     def save_record(self):
-        reward_array = pd.DataFrame(self.reward_array,columns="reward")
+        reward_array = pd.DataFrame(self.reward_array,columns=["reward"])
         obs_array = pd.DataFrame(self.desin_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
         metric_array = pd.DataFrame(self.metric_array,columns=['latency','Area','energy','power'])
-        result_df = pd.concat(reward_array,obs_array,metric_array)
-        result_df.to_csv("../data/blackscholes_cloud_crldse.csv")
+        result_df = pd.concat([reward_array,obs_array,metric_array],axis=1)
+        result_df.to_csv(f"./data/{self.config.benchmark}_{self.config.target}_{self.algo}.csv")
+
 
 
 # running the main loop of the algorithms
