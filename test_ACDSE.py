@@ -60,7 +60,7 @@ class ACDSE():
         self.LRP = [0,7]
 
         #define the hyperparameters
-        self.PERIOD_BOUND = 1
+        self.PERIOD_BOUND = 500
         self.SAMPLE_PERIOD_BOUND = 10   #1000
         self.GEMA = 0.999               #RL parameter, discount ratio
         self.ALPHA = 0.001              #RL parameter, learning step rate
@@ -83,7 +83,7 @@ class ACDSE():
         action_scale_list = list()
         for dimension in self.DSE_action_space.dimension_box:
             action_scale_list.append(int(dimension.get_scale()))
-        self.policy_type = "RNN"
+        self.policy_type = "MLP"
         if(self.policy_type == "MLP"):
             #self.policyfunction = mlp_policyfunction(self.DSE_action_space.get_lenth(), action_scale_list)
             self.policyfunction = mlp_policyfunction(self.DSE_action_space.const_lenth + self.DSE_action_space.dynamic_lenth, action_scale_list)
@@ -101,6 +101,7 @@ class ACDSE():
 
         ##initial fillter
         #self.fillter = mlp_fillter(self.DSE_action_space.get_lenth())
+        print("fillter's init:",self.DSE_action_space.get_lenth())
         self.fillter = mlp_fillter(self.DSE_action_space.get_lenth())
         #### fillter buffer
         self.fillter_obs_buffer = list()
@@ -129,8 +130,8 @@ class ACDSE():
     def train_fillter(self, obs_list, reward_list):
         print(f"**************  Training the fillter, now we have {len(obs_list)} samples   ******************")
         data_size = len(obs_list)
-        batch_size = 1      #set batchszie
-        epoch_time = 1      #set epochs
+        batch_size = 50      #set batchszie
+        epoch_time = 100      #set epochs
 
         refuse_record = 0
         reward_list_back = copy.deepcopy(reward_list)
@@ -158,7 +159,7 @@ class ACDSE():
             idxs = np.random.randint(0, int(0.8*data_size), size=batch_size)
             data = torch.as_tensor(data_all[idxs], dtype=torch.float32)
             target = torch.as_tensor(target_all[idxs], dtype=torch.long)
-
+            print("filter data:",data)
             predict = self.fillter(data)
             loss = loss_function(predict, target)
             #if(epoch%200==0): print(f"loss:{loss}")
@@ -297,8 +298,11 @@ class ACDSE():
             
             self.fillter_train_flag = (period-self.SAMPLE_PERIOD_BOUND)%self.fillter_train_interval == 0
             if(period >= self.SAMPLE_PERIOD_BOUND and self.fillter_train_flag):
+                print("========fillter_obs_buffer.shape========:\n",len(self.fillter_obs_buffer)," ",self.fillter_obs_buffer[0].shape)
+                print("========fillter_reward_buffer========:\n",len(self.fillter_reward_buffer))
                 self.train_fillter(self.fillter_obs_buffer, self.fillter_reward_buffer)
             obs = self.DSE_action_space.get_obs()
+            print("=============obs============:",obs)
             t_obs = torch.as_tensor(obs, dtype=torch.float32).unsqueeze(0)
             self.fillter.eval()
             predict = self.fillter(t_obs)
@@ -332,6 +336,7 @@ class ACDSE():
                 reward = 0
                 power = 0
                 self.metric_array.append([0,0,0,0])
+            self.reward_array.append(reward)
             reward_list.append(reward)
             print(f"index:{self.iindex}, period:{period}, state:{self.state_flag}, objectvalue:{objectvalue}, best:{self.best_objectvalue}", end="\r")
             #print(f"period:{period}, objectvalue:{objectvalue}, reward:{reward}", end = '\r')

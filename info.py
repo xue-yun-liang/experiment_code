@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 import yaml
 
-script_to_run = 'test_SAC.py'    # 要运行的Python脚本名称
+script_to_run = 'test_ACDSE.py'    # 要运行的Python脚本名称
 process = subprocess.Popen(['python3', script_to_run])
 process.wait()
 print(f"脚本 {script_to_run} 已结束")
