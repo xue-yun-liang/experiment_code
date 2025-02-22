@@ -59,7 +59,7 @@ class MOMPRDSE:
         self.evaluation = evaluation_gem5(default_state)
 
         # define the hyperparameters
-        self.PERIOD_BOUND = 1 # set epochs
+        self.PERIOD_BOUND = 500 # set epochs
         self.SAMPLE_PERIOD_BOUND = 4
         self.GEMA = 0.999  # RL parameter, discount ratio
         self.ALPHA = 0.001  # RL parameter, learning step rate
