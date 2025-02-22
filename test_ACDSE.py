@@ -118,7 +118,7 @@ class ACDSE():
         self.t = timer()
 
         self.reward_array = list()
-        self.desin_point_array = list()
+        self.design_point_array = list()
         self.metric_array = list()
 
     def more_local(self):
@@ -319,6 +319,7 @@ class ACDSE():
 
             all_status = self.DSE_action_space.get_status()
             self.t.start("eva")
+            self.design_point_array.append(all_status.values())
             metrics = self.evaluation.eval(all_status.values())
             self.t.end("eva")
             if metrics != None:
@@ -445,7 +446,7 @@ class ACDSE():
     
     def save_record(self):
         reward_array = pd.DataFrame(self.reward_array,columns=["reward"])
-        obs_array = pd.DataFrame(self.desin_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
+        obs_array = pd.DataFrame(self.design_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
         metric_array = pd.DataFrame(self.metric_array,columns=['latency','Area','energy','power'])
         result_df = pd.concat([reward_array,obs_array,metric_array],axis=1)
         result_df.to_csv(f"./data/{self.config.benchmark}_{self.config.target}_{self.algo}.csv")
