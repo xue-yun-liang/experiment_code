@@ -958,7 +958,7 @@
             "name": "clk_domain",
             "path": "system.clk_domain",
             "clock": [
-                313
+                357
             ],
             "domain_id": -1,
             "eventq_index": 0,
@@ -1171,7 +1171,7 @@
                     "addr_ranges": [
                         "0:18446744073709551615"
                     ],
-                    "assoc": 1,
+                    "assoc": 2,
                     "clk_domain": "system.cpu_clk_domain",
                     "clusivity": "mostly_incl",
                     "compressor": null,
@@ -1209,7 +1209,7 @@
                     },
                     "response_latency": 2,
                     "sequential_access": false,
-                    "size": 262144,
+                    "size": 65536,
                     "system": "system",
                     "tag_latency": 2,
                     "tags": {
@@ -1217,7 +1217,7 @@
                         "cxx_class": "gem5::BaseSetAssoc",
                         "name": "tags",
                         "path": "system.cpu.dcache.tags",
-                        "assoc": 1,
+                        "assoc": 2,
                         "block_size": 64,
                         "clk_domain": "system.cpu_clk_domain",
                         "entry_size": 64,
@@ -1227,10 +1227,10 @@
                             "cxx_class": "gem5::SetAssociative",
                             "name": "indexing_policy",
                             "path": "system.cpu.dcache.tags.indexing_policy",
-                            "assoc": 1,
+                            "assoc": 2,
                             "entry_size": 64,
                             "eventq_index": 0,
-                            "size": 262144
+                            "size": 65536
                         },
                         "power_model": [],
                         "power_state": {
@@ -1248,7 +1248,7 @@
                         },
                         "replacement_policy": "system.cpu.dcache.replacement_policy",
                         "sequential_access": false,
-                        "size": 262144,
+                        "size": 65536,
                         "system": "system",
                         "tag_latency": 2,
                         "warmup_percentage": 0
@@ -1383,7 +1383,7 @@
                     "addr_ranges": [
                         "0:18446744073709551615"
                     ],
-                    "assoc": 2,
+                    "assoc": 1,
                     "clk_domain": "system.cpu_clk_domain",
                     "clusivity": "mostly_incl",
                     "compressor": null,
@@ -1421,7 +1421,7 @@
                     },
                     "response_latency": 2,
                     "sequential_access": false,
-                    "size": 4096,
+                    "size": 1048576,
                     "system": "system",
                     "tag_latency": 2,
                     "tags": {
@@ -1429,7 +1429,7 @@
                         "cxx_class": "gem5::BaseSetAssoc",
                         "name": "tags",
                         "path": "system.cpu.icache.tags",
-                        "assoc": 2,
+                        "assoc": 1,
                         "block_size": 64,
                         "clk_domain": "system.cpu_clk_domain",
                         "entry_size": 64,
@@ -1439,10 +1439,10 @@
                             "cxx_class": "gem5::SetAssociative",
                             "name": "indexing_policy",
                             "path": "system.cpu.icache.tags.indexing_policy",
-                            "assoc": 2,
+                            "assoc": 1,
                             "entry_size": 64,
                             "eventq_index": 0,
-                            "size": 4096
+                            "size": 1048576
                         },
                         "power_model": [],
                         "power_state": {
@@ -1460,7 +1460,7 @@
                         },
                         "replacement_policy": "system.cpu.icache.replacement_policy",
                         "sequential_access": false,
-                        "size": 4096,
+                        "size": 1048576,
                         "system": "system",
                         "tag_latency": 2,
                         "warmup_percentage": 0
@@ -1812,7 +1812,7 @@
             "addr_ranges": [
                 "0:18446744073709551615"
             ],
-            "assoc": 2,
+            "assoc": 1,
             "clk_domain": "system.cpu_clk_domain",
             "clusivity": "mostly_incl",
             "compressor": null,
@@ -1850,7 +1850,7 @@
             },
             "response_latency": 20,
             "sequential_access": false,
-            "size": 524288,
+            "size": 262144,
             "system": "system",
             "tag_latency": 20,
             "tags": {
@@ -1858,7 +1858,7 @@
                 "cxx_class": "gem5::BaseSetAssoc",
                 "name": "tags",
                 "path": "system.l2.tags",
-                "assoc": 2,
+                "assoc": 1,
                 "block_size": 64,
                 "clk_domain": "system.cpu_clk_domain",
                 "entry_size": 64,
@@ -1868,10 +1868,10 @@
                     "cxx_class": "gem5::SetAssociative",
                     "name": "indexing_policy",
                     "path": "system.l2.tags.indexing_policy",
-                    "assoc": 2,
+                    "assoc": 1,
                     "entry_size": 64,
                     "eventq_index": 0,
-                    "size": 524288
+                    "size": 262144
                 },
                 "power_model": [],
                 "power_state": {
@@ -1889,7 +1889,7 @@
                 },
                 "replacement_policy": "system.l2.replacement_policy",
                 "sequential_access": false,
-                "size": 524288,
+                "size": 262144,
                 "system": "system",
                 "tag_latency": 20,
                 "warmup_percentage": 0

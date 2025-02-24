@@ -9,6 +9,7 @@ import yaml
 from multiprocessing import Process, Lock, Manager, Pool
 import sys
 
+import tqdm
 from config import config_global
 sys.path.append("./util/")
 from space import create_space_maestro, environment_maestro, environment_gem5
@@ -286,6 +287,7 @@ def ppo(iindex, actor_critic=core_ppo.MLPActorCritic_DSE,
 
     # Main loop: collect experience in env and update/log each epoch
     tm.start("all")
+    pbar = tqdm(range(epochs), desc="Searching", unit="iteration", leave=False)
     for epoch in range(epochs):
         for t in range(local_steps_per_epoch):
             n = t % env.design_space_dimension

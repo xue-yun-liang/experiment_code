@@ -1,0 +1,32 @@
+Reading config from: ./m5out/config.json
+Reading McPAT template from: /app/cMcPAT/mcpat/ProcessorDescriptionFiles/x86_AtomicSimpleCPU_template_core_16.xml
+Writing input to McPAT in: /app/mcpat_in/test.xml
+Cache size must >=64
+Cache size must >=64
+Cache size must >=64
+Reading config from: ./m5out/config.json
+Reading McPAT template from: /app/cMcPAT/mcpat/ProcessorDescriptionFiles/x86_AtomicSimpleCPU_template_core_3.xml
+Writing input to McPAT in: /app/mcpat_in/test.xml
+Cache size must >=64
+Cache size must >=64
+Cache size must >=64
+Reading config from: ./m5out/config.json
+Reading McPAT template from: /app/cMcPAT/mcpat/ProcessorDescriptionFiles/x86_AtomicSimpleCPU_template_core_2.xml
+Writing input to McPAT in: /app/mcpat_in/test.xml
+Cache size must >=64
+Cache size must >=64
+Cache size must >=64
+Traceback (most recent call last):
+  File "/app/experiment_code/test_ACDSE.py", line 496, in <module>
+    pool.map(run, args_list)
+  File "/usr/lib/python3.10/multiprocessing/pool.py", line 367, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+  File "/usr/lib/python3.10/multiprocessing/pool.py", line 768, in get
+    self.wait(timeout)
+  File "/usr/lib/python3.10/multiprocessing/pool.py", line 765, in wait
+    self._event.wait(timeout)
+  File "/usr/lib/python3.10/threading.py", line 607, in wait
+    signaled = self._cond.wait(timeout)
+  File "/usr/lib/python3.10/threading.py", line 320, in wait
+    waiter.acquire()
+KeyboardInterrupt
