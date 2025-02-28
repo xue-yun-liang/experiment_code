@@ -1,5 +1,6 @@
 import random
 import sys
+import os
 import yaml
 from multiprocessing import Pool
 
@@ -67,6 +68,20 @@ class DSE(ea.Problem):
         lbin = [1] * Dim                        # 1 means include the low bound, 0 means do not include the low bound
         ubin = [1] * Dim
         ea.Problem.__init__(self, name, M, maxormins, Dim, varTypes, lb, ub, lbin, ubin)
+        output_dir = "./data"
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        # 定义输出文件路径
+        output_file = f"{output_dir}/{config.benchmark}_{config.target}_RANDOM_DATA.csv"
+
+        # 如果文件不存在，先创建并写入表头
+        if not os.path.exists(output_file):
+            with open(output_file, 'w') as f:
+                f.write("reward,core,l1i_size,l1d_size,l2_size,l1i_assoc,l1d_assoc,l2_assoc,clock_rate,latency,Area,energy,power\n")
+
+
+        self.save_path = output_file
         
     def aimFunc(self, pop):
         global my_period,best_runtime_now,best_power_now,power_list,runtime_list
@@ -113,6 +128,10 @@ class DSE(ea.Problem):
                 area =10000
                 metric_array.append([10000, 10000, 10000, 10000])
                 reward_array.append(-1)
+                metrics = {"energy": 0, "Area": 0, "latency": 0, "power": 0}
+            with open(self.save_path, 'a') as f:
+                f.write(f"{reward},{status['core']},{status['l1i_size']},{status['l1d_size']},{status['l2_size']},{status['l1i_assoc']},{status['l1d_assoc']},{status['l2_assoc']},{status['sys_clock']},{metrics['latency']},{metrics['Area']},{metrics['energy']},{metrics['power']}\n")
+
             if  area < AREA_THRESHOLD :
                 best_runtime_now = runtime
                 best_power_now = power
@@ -136,7 +155,7 @@ def run(iindex):
     global reward_array, metric_array, desin_point_array
     print(f"%%%%%%%%%%%%%%%TEST{iindex} START%%%%%%%%%%%%%")
     global my_period, best_runtime_now, best_power_now,power_list, runtime_list
-    
+
     seed = iindex * 10000
     atype = int(iindex / 10)
     np.random.seed(seed)
@@ -158,7 +177,7 @@ def run(iindex):
     obs_array = pd.DataFrame(desin_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
     metric_array = pd.DataFrame(metric_array,columns=['latency','Area','energy','power'])
     result_df = pd.concat([reward_array,obs_array,metric_array], axis=1)
-    result_df.to_csv(f"./data/{config.benchmark}_{config.target}_nsga2.csv")
+    result_df.to_csv(f"./data/{config.benchmark}_{config.target}_nsga2_f.csv")
 
 if __name__ == '__main__':
     USE_MULTIPROCESS = False

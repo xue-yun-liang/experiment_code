@@ -6,7 +6,7 @@ import update
 import pandas as pd
 
 class Mopso:
-    def __init__(self,particals,w,c1,c2,max_,min_,thresh,mesh_div=10):
+    def __init__(self,particals,w,c1,c2,max_,min_,thresh,output_path,mesh_div=10):
         self.w,self.c1,self.c2 = w,c1,c2
         self.mesh_div = mesh_div
         self.particals = particals
@@ -24,12 +24,16 @@ class Mopso:
         self.design_point_array = list()
         self.metric_array = list()
         self.reward_array = list()
+        self.save_path = output_path
     def evaluation_fitness(self): 
         #计算适应度值ֵ
         fitness_curr = []
         for i in range((self.in_).shape[0]):
             print(f"+++++++++++++++++++++++++++++number{i}++++++++++++++++++++++")
             fitness_cheack,singnal,status,metric,reward = fitness_(self.in_[i])
+            with open(self.save_path, 'a') as f:
+                f.write(f"{reward},{status[0]},{status[1]},{status[2]},{status[3]},{status[4]},{status[5]},{status[6]},{status[7]},{metric[0]},{metric[2]},{metric[3]},{metric[1]}\n")
+ 
             self.metric_array.append(metric)
             self.reward_array.append(reward)
             self.design_point_array.append(status)

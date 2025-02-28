@@ -74,7 +74,7 @@ def fitness_(in_):
     fit_2 = power+L1*e_POWER+L2*e_LAtency+L3*e_AREA
     fit_3 = area + L1*e_POWER+L2*e_LAtency+L3*e_AREA
     print (fit_2,fit_1,fit_3)
-    return [fit_2,fit_1,fit_3],constrain_signal, status.values(), [runtime, area, power], reward
+    return [fit_2,fit_1,fit_3],constrain_signal, status.values(), [runtime, area, power,energy], reward
 # def constraint_DSP(X):
 #     return(max(0,X-DSP_THRESHOLD))
 # def constraint_energy(X):

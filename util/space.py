@@ -142,30 +142,30 @@ class design_space():
         return status
     def get_compact_status(self, dimension_index):
         status = dict()
-        # if(dimension_index < self.const_lenth):
-        layer_index = 0
-        #     layer = "Hardware"
-        #     temp_layer = self.layer_name[layer_index]
-        # else:
-        #     layer_index = int((dimension_index - self.const_lenth)/self.dynamic_lenth)
-        #     layer = self.layer_name[layer_index]
+        if(dimension_index < self.const_lenth):
+            layer_index = 0
+            layer = "Hardware"
+            temp_layer = self.layer_name[layer_index]
+        else:
+            layer_index = int((dimension_index - self.const_lenth)/self.dynamic_lenth)
+            layer = self.layer_name[layer_index]
 
         const_range = range(0, self.const_lenth)
         dynamic_range = range(self.const_lenth+layer_index*self.dynamic_lenth, self.const_lenth+(layer_index+1)*self.dynamic_lenth)
-        # if(layer == "Hardware"):
-        #     for dindex in const_range:
-        #         item = self.dimension_box[dindex]
-        #         status[item.get_name()] = item.get_current_value()
-        #     for dindex in dynamic_range:
-        #         item = self.dimension_box[dindex]
-        #         status[item.get_name()] = 0
-        # else:
-        for dindex in const_range:
-            item = self.dimension_box[dindex]
-            status[item.get_name()] = item.get_current_value()
-        for dindex in dynamic_range:	
-            item = self.dimension_box[dindex]
-            status[item.get_name()] = item.get_current_value()
+        if(layer == "Hardware"):
+            for dindex in const_range:
+                item = self.dimension_box[dindex]
+                status[item.get_name()] = item.get_current_value()
+            for dindex in dynamic_range:
+                item = self.dimension_box[dindex]
+                status[item.get_name()] = 0
+        else:
+            for dindex in const_range:
+                item = self.dimension_box[dindex]
+                status[item.get_name()] = item.get_current_value()
+            for dindex in dynamic_range:	
+                item = self.dimension_box[dindex]
+                status[item.get_name()] = item.get_current_value()
         return status
 
     def get_status_value(self):
@@ -875,7 +875,11 @@ class environment_gem5():
                 pass
             elif(self.algo == "happo" or self.algo == "hasac"):
                 pass
-        
+        output_file = f"./data/{self.benckmark}_{self.target}_{self.algo}.csv"
+        if not os.path.exists(output_file):
+            with open(output_file, 'w') as f:
+                f.write("reward,core,l1i_size,l1d_size,l2_size,l1i_assoc,l1d_assoc,l2_assoc,clock_rate,latency,Area,energy,power\n")
+
         self.design_space.sample_one_dimension(step, act)
         #obs = self.design_space.get_obs()
         obs = self.design_space.get_compact_obs(step)
@@ -891,6 +895,15 @@ class environment_gem5():
             else:
                 all_status = self.design_space.get_status()
                 self.design_point_array.append(all_status.values())
+                s = all_status.values()
+                s = list(s)
+                metrics = None
+                if s == [9, 1024, 8, 64, 1, 2, 8, 3.4]:
+                    metrics = None
+                    print("current's step is stop step")
+                else:
+                    metrics = self.evaluation.evaluate(all_status.values())
+                    print("current's step is normal step")
                 print(all_status)
                 metrics = self.evaluation.evaluate(all_status.values())
 
@@ -909,9 +922,11 @@ class environment_gem5():
                 else:
                     reward = 0
                     power = 0
+                    metrics = {"latency":0,"Area":0,"power":0,"energy":0}
                     self.metric_array.append([0,0,0,0])
                     self.reward_array.append(reward)
-
+                with open(output_file, 'a') as f:
+                    f.write(f"{reward},{all_status['core']},{all_status['l1i_size']},{all_status['l1d_size']},{all_status['l2_size']},{all_status['l1i_assoc']},{all_status['l1d_assoc']},{all_status['l2_assoc']},{all_status['sys_clock']},{metrics['latency']},{metrics['Area']},{metrics['energy']},{metrics['power']}\n")
                 print(f"objectvalue:{objectvalue}, reward:{reward}", end = '\r')
 
                 if(not self.test):
@@ -922,10 +937,19 @@ class environment_gem5():
                         self.multiobjecvalue_list.append([metrics["latency"], metrics["energy"]])
         else:
             all_status = self.design_space.get_status()
-            print("all_status:",all_status)
-            metrics = self.evaluation.eval(all_status.values())
             self.design_point_array.append(all_status.values())
             reward = float(0)
+            print("all_status:",all_status)
+            s = all_status.values()
+            s = list(s)
+            metrics = None
+            if s == [9, 1024, 8, 64, 1, 2, 8, 3.4]:
+                metrics = None
+                print("current's step is stop step")
+            else:
+                metrics = self.evaluation.eval(all_status.values())
+                print("current's step is normal step")
+
             if metrics != None:
                 energy = metrics["latency"]
                 area = metrics["Area"]
@@ -943,9 +967,11 @@ class environment_gem5():
                 reward = 0
                 power = 0
                 objectvalue = 0
+                metrics = {"latency":0,"Area":0,"power":0,"energy":0}
                 self.metric_array.append([0,0,0,0])
                 self.reward_array.append(reward)
-
+            with open(output_file, 'a') as f:
+                f.write(f"{reward},{all_status['core']},{all_status['l1i_size']},{all_status['l1d_size']},{all_status['l2_size']},{all_status['l1i_assoc']},{all_status['l1d_assoc']},{all_status['l2_assoc']},{all_status['sys_clock']},{metrics['latency']},{metrics['Area']},{metrics['energy']},{metrics['power']}\n")
             print(f"objectvalue:{objectvalue}, reward:{reward}", end = '\r')
 
             if(not self.test):

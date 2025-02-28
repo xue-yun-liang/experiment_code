@@ -3,6 +3,7 @@ import numpy as np
 import xlwt
 import yaml
 import sys
+import os
 import pandas as pd
 sys.path.append("./util/")
 from mopso import Mopso
@@ -40,7 +41,15 @@ def main():
     thresh = 300    #外部存档阀值
     min_ = np.array([1, 1, 1, 6, 1, 1, 1, 20])          #粒子坐标的最小值
     max_ = np.array([16, 12, 12, 16, 4, 4, 4, 40])      #粒子坐标的最大值
-    mopso_ = Mopso(particals,w,c1,c2,max_,min_,thresh,mesh_div)         #粒子群实例化
+
+    output_file = f"./data/{config.benchmark}_{config.target}_{algo}.csv"
+
+    # 如果文件不存在，先创建并写入表头
+    if not os.path.exists(output_file):
+        with open(output_file, 'w') as f:
+            f.write("reward,core,l1i_size,l1d_size,l2_size,l1i_assoc,l1d_assoc,l2_assoc,clock_rate,latency,Area,energy,power\n")
+
+    mopso_ = Mopso(particals,w,c1,c2,max_,min_,thresh,output_file,mesh_div)         #粒子群实例化
     pareto_in, pareto_fitness = mopso_.done(cycle_)                      #经过cycle_轮迭代后，pareto边界粒子
     pareto_fitness.tolist()
     with open('util/config.yaml', 'r') as file:
@@ -49,9 +58,9 @@ def main():
     # np.savetxt("./img_txt/pareto_fitness.txt",pareto_fitness) #打印pareto边界粒子的适应值
     reward_array = pd.DataFrame(mopso_.reward_array,columns=["reward"])
     obs_array = pd.DataFrame(mopso_.design_point_array,columns=["core","l1i_size","l1d_size","l2_size","l1i_assoc","l1d_assoc","l2_assoc","clock_rate"])
-    metric_array = pd.DataFrame(mopso_.metric_array,columns=['latency','Area','power'])
+    metric_array = pd.DataFrame(mopso_.metric_array,columns=['latency','Area','power','energy'])
     result_df = pd.concat([reward_array,obs_array,metric_array], axis=1)
-    result_df.to_csv(f"./data/{config_data['benchmark']}_{config_data['target']}_{algo}.csv")
+    result_df.to_csv(f"./data/{config_data['benchmark']}_{config_data['target']}_{algo}_bak.csv")
     print ("\n,迭代结束")
  
 if __name__ == "__main__":

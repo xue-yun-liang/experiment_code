@@ -5,56 +5,88 @@ import matplotlib.pyplot as plt
 import os
 
 # 定义 tsne3D 函数
-def tsne3D(vector_list, reward_list, method):
+def tsne3D(vector_list, reward_list, ax, method):
     action_array = np.array(vector_list)
     reward_continue_array = np.array(reward_list)
 
     tsne = manifold.TSNE(n_components=2, init="pca", random_state=501)
-    print(f"Start to load t-SNE")
+    print(f"Start to load t-SNE to plot for {method}")
     x_tsne = tsne.fit_transform(action_array)
 
     x_min, x_max = x_tsne.min(0), x_tsne.max(0)
     x_norm = (x_tsne - x_min) / (x_max - x_min)
 
-    fig_3D = plt.figure()
-    tSNE_3D = plt.axes(projection='3d')
-    tSNE_3D.scatter3D(x_norm[:, 0], x_norm[:, 1], reward_continue_array, c=reward_continue_array, vmax=20, cmap="rainbow", alpha=0.5)
-    tSNE_3D.set_xlabel("x")
-    tSNE_3D.set_ylabel("y")
-    tSNE_3D.set_zlabel("Reward")
-    tSNE_3D.set_zlim((0, 80))
-    tSNE_3D.set_zticks([0, 20, 40, 60, 80])
-    fname = method + "_" + "tSEN_3D" + ".png"
-    fig_3D.savefig(fname, format="png")
+    scatter = ax.scatter3D(x_norm[:, 0], x_norm[:, 1], c=reward_continue_array, vmax=20, cmap="rainbow", alpha=0.3)
+    ax.scatter3D(x_norm[:, 0], x_norm[:, 1], reward_continue_array, c=reward_continue_array, vmax=20, cmap="rainbow", alpha=0.3)
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("Reward")
+    ax.set_zlim((0, 80))
+    ax.set_zticks([0, 20, 40, 60, 80])
+
+    # 去掉坐标轴边框
+    # for edge, spine in ax.spines.items():
+    #     spine.set_visible(False)
+
+    return scatter
 
 
-path = '/app/experiment_code/data'
+embed_path = '/app/experiment_code/data/random_data/blackscholes_embed_random.csv'
+normal_path = '/app/experiment_code/data/random_data/blackscholes_normal_random.csv'
+cloud_path = '/app/experiment_code/data/random_data/blackscholes_cloud_random.csv'
 
 # 初始化一个空列表，用于存储读取的 DataFrame
-data_frames = []
+embed_df = pd.read_csv(embed_path)
+normal_df = pd.read_csv(normal_path)
+cloud_df = pd.read_csv(cloud_path)
 
 # 遍历指定路径下的所有文件
-for filename in os.listdir(path):
-    if filename.endswith('.csv') and 'cloud' in filename and 'acdse' not in filename and 'momprdse' not in filename:
-        file_path = os.path.join(path, filename)
-        try:
-            # 读取 CSV 文件
-            df = pd.read_csv(file_path)
-            data_frames.append(df)
-        except Exception as e:
-            print(f"read file {filename} error: {e}")
+# for filename in os.listdir(path):
+#     if filename.endswith('.csv') and 'cloud' in filename and 'acdse' not in filename and 'momprdse' not in filename:
+#         file_path = os.path.join(path, filename)
+#         try:
+#             # 读取 CSV 文件
+#             df = pd.read_csv(file_path)
+#             data_frames.append(df)
+#         except Exception as e:
+#             print(f"read file {filename} error: {e}")
 
-# 将所有 DataFrame 堆叠起来
-if data_frames:
-    stacked_data = pd.concat(data_frames, ignore_index=True)
-    stacked_data = stacked_data[stacked_data['latency'] < 999.0]
-    stacked_data = stacked_data.dropna()
-    stacked_data.info()
-    stacked_data.head()
-    # 分离 reward 列和其他列的数据
-    reward_list = stacked_data['reward'].tolist()
-    vector_list = stacked_data[['latency','Area','energy','power']].values.tolist()
-    # 调用 tsne3D 函数
-    method = 'cloud'
-    tsne3D(vector_list, reward_list, method)
+
+# Filter and prepare data for each method
+embed_filted_data = embed_df[embed_df['latency'] < 9990.].dropna()
+normal_filted_data = normal_df[normal_df['latency'] < 999.0].dropna()
+cloud_filted_data = cloud_df[cloud_df['latency'] < 999.0].dropna()
+
+# Prepare the data for t-SNE
+vector_list_name = ["core", "l1i_size", "l1d_size", "l2_size", "l1i_assoc", "l1d_assoc", "l2_assoc", "clock_rate"]
+embed_reward_list = embed_filted_data['reward']*2
+embed_reward_list = embed_reward_list.tolist()
+embed_vector_list = embed_filted_data[vector_list_name].values.tolist()
+
+normal_reward_list = normal_filted_data['reward']*2
+normal_reward_list = normal_reward_list.tolist()
+normal_vector_list = normal_filted_data[vector_list_name].values.tolist()
+
+cloud_reward_list = cloud_filted_data['reward']*2
+cloud_reward_list = cloud_reward_list.tolist()
+cloud_vector_list = cloud_filted_data[vector_list_name].values.tolist()
+
+# Create a figure with three subplots
+fig = plt.figure(figsize=(18, 6))
+
+ax1 = fig.add_subplot(131, projection='3d')
+ax1.set_title('(a)')
+scatter1 = tsne3D(embed_vector_list, embed_reward_list, ax1, 'Embed')
+
+ax2 = fig.add_subplot(132, projection='3d')
+ax2.set_title('(b)')
+scatter2 = tsne3D(normal_vector_list, normal_reward_list, ax2, 'Normal')
+
+ax3 = fig.add_subplot(133, projection='3d')
+ax3.set_title('(c)')
+scatter3 = tsne3D(cloud_vector_list, cloud_reward_list, ax3, 'Cloud')
+
+# Save the figure
+fpath = './random_data/tsne_plots.png'
+plt.savefig(fpath, format="png",dpi=600)
 
