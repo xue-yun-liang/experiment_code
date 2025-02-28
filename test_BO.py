@@ -69,11 +69,11 @@ def object_function(parameters):
     with open(output_file, 'a') as f:
         f.write(f"{reward},{status['core']},{status['l1i_size']},{status['l1d_size']},{status['l2_size']},{status['l1i_assoc']},{status['l1d_assoc']},{status['l2_assoc']},{status['sys_clock']},{metrics['latency']},{metrics['Area']},{metrics['energy']},{metrics['power']}\n")
 
-    if(not record.objectvalue_list):
-        record.objectvalue_list.append(objectvalue)
-    else:
-        pass
-    best_objectvalue = record.objectvalue_list[-1]
+    # if(not record.objectvalue_list):
+    #     record.objectvalue_list.append(objectvalue)
+    # else:
+    #     pass
+    # best_objectvalue = record.objectvalue_list[-1]
 
     # if(objectvalue < best_objectvalue and constraints.is_all_meet()):
     #     best_objectvalue = objectvalue
@@ -97,7 +97,7 @@ def run(args):
     constraints = config.constraints
 
     target = config.target
-    period = 20
+    period = 500
     config.config_check()
     pid = os.getpid()
 
