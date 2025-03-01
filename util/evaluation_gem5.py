@@ -171,14 +171,20 @@ def run_gem5_sim(obs, sim_config):
         obs["l2_size"], obs["l1d_assoc"], obs["l1i_assoc"],obs["l2_assoc"])
     print(cmd)
     proc = Popen(cmd, shell=True)
-    proc.wait()
+    start_time = time.time()
+    while proc.poll() is None:
+        if time.time() - start_time > 600:  # 10 minutes timeout
+            print("gem sim timeout")
+            proc.kill()  # Ensure the process is terminated
+            return 0
+        time.sleep(1)  # Poll every second
     return_code = proc.returncode
     if return_code == 0:
         print("gem sim successfuly")
         return 1
     else:
         print("gem sim fail")
-    return 0
+        return 0
         
 
 def split_stats_file():
