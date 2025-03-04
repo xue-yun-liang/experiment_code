@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-metric_list = ["power","latency"]
+metric_list = ["power","Area"]
 metric_str = "_".join(metric_list)
 
-benchmark = 'canneal'
+benchmark = 'blackscholes'
 target = 'cloud'
 
 def filter_invalid(df):
@@ -55,9 +55,9 @@ def pareto_frontier(df: pd.DataFrame) -> pd.DataFrame:
     
     # 遍历排序后的数据，筛选出帕累托前沿点
     for _, row in df_sorted.iterrows():
-        if row['latency'] < min_latency:
+        if row['Area'] < min_latency:
             pareto_points.append(row)
-            min_latency = row['latency']
+            min_latency = row['Area']
     
     return pd.DataFrame(pareto_points)
 
@@ -136,40 +136,39 @@ def plot_pareto_front_all_data(data_list, names_list):
 
     # 设置 x 轴和 y 轴范围
     local_x_min = 0
-    local_x_max = 0.0015
+    local_x_max = 50
     local_y_min = 0
-    local_y_max = 50
+    local_y_max = 10
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+
     ax1.scatter(combined_data[x_label], combined_data[y_label], color='lightgray', label='all data', alpha=0.3)
     ax2.scatter(combined_data[x_label], combined_data[y_label], color='lightgray', label='all data', alpha=0.3)
     
     # 定义颜色和标记列表
-    colors = ['red', 'blue', 'green', 'orange', 'purple', 'brown', 'pink', 'gray', 'olive', 'cyan']
-    markers = ['x', '^', '+', 's', 'd', 'o', '*', 'v', '<', '>']
+    colors = ['blue', 'green', 'orange', 'purple', 'brown', 'pink', 'gray', 'olive', 'red','cyan']
+    markers = ['^', '+', 's', 'd', 'o', '*', 'v', '<', 'x', '>']
     
     # 绘制每个数据集的帕累托前沿
     for i, (pareto_front, name) in enumerate(zip(pareto_fronts, names_list)):
         color = colors[i % len(colors)]
         marker = markers[i % len(markers)]
-        if name == 'crldse':
-            ax1.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name, zorder=10)
-            ax2.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name, zorder=10)
-        else:
-            ax1.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name)
-            ax2.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name)
+        ax1.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name)
+        ax2.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name)
     
+    if x_label == "latency":
+        x_label = "latency(ms)"
     ax1.set_xlim(x_min, x_max)
     ax1.set_ylim(y_min, y_max)
-    ax1.set_xlabel(x_label)
-    ax1.set_ylabel(y_label)
+    ax1.set_xlabel(x_label,fontsize=16)
+    ax1.set_ylabel(y_label,fontsize=16)
     ax1.set_title("(a)", loc='center', pad=-20)
     ax1.legend(loc='upper right')
 
     ax2.set_xlim(local_x_min, local_x_max)
     ax2.set_ylim(local_y_min, local_y_max)
-    ax2.set_xlabel(x_label)
-    ax2.set_ylabel(y_label)
+    ax2.set_xlabel(x_label,fontsize=16)
+    ax2.set_ylabel(y_label,fontsize=16)
     ax2.set_title("(b)", loc='center', pad=-20)
     ax2.legend(loc='upper right')
 
@@ -183,36 +182,45 @@ if __name__ == "__main__":
     # load data
 
 
-    crldse_df = pd.read_csv(f'{benchmark}_{target}_crldse.csv')
+    
     erdse_df = pd.read_csv(f'{benchmark}_{target}_erdse.csv')
     momprdse_df = pd.read_csv(f'{benchmark}_{target}_momprdse.csv')
     acdse_df = pd.read_csv(f'{benchmark}_{target}_acdse.csv')
-    nsga2_df = pd.read_csv(f'{benchmark}_{target}_nsga2.csv')
-    mopso_df = pd.read_csv(f'{benchmark}_{target}_mopso.csv')
     sac_df = pd.read_csv(f'{benchmark}_{target}_sac.csv')
     ppo_df = pd.read_csv(f'{benchmark}_{target}_ppo.csv')
+    nsga2_df = pd.read_csv(f'{benchmark}_{target}_nsga2.csv')
+    mopso_df = pd.read_csv(f'{benchmark}_{target}_mopso.csv')
+    bo_df = pd.read_csv(f'{benchmark}_{target}_bo.csv')
+    crldse_df = pd.read_csv(f'{benchmark}_{target}_crldse.csv')
 
-    dataframes = [
-        ('crldse_df', crldse_df),
-        ('erdse_df', erdse_df),
-        ('momprdse_df', momprdse_df),
-        ('acdse_df', acdse_df),
-        ('nsga2_df', nsga2_df),
-        ('mopso_df', mopso_df),
-        ('sac_df', sac_df),
-        ('ppo_df', ppo_df)
-    ]
-    print(crldse_df.head())
+    # dataframes = [
+    #     ('erdse_df', erdse_df),
+    #     ('momprdse_df', momprdse_df),
+    #     ('acdse_df', acdse_df),
+    #     ('sac_df', sac_df),
+    #     ('ppo_df', ppo_df),
+    #     ('nsga2_df', nsga2_df),
+    #     ('mopso_df', mopso_df),
+    #     ('bo_df', bo_df),
+    #     ('crldse_df', crldse_df),
+    # ]
+    # print(crldse_df.head())
+    
 
-    dataframes = [crldse_df, erdse_df, momprdse_df, acdse_df, nsga2_df, mopso_df, sac_df, ppo_df]
+    dataframes = [erdse_df, momprdse_df, acdse_df, sac_df, ppo_df, nsga2_df, mopso_df, bo_df, crldse_df]
+    names_ = ['erdse', 'momprdse', 'acdse', 'ppo', 'dtl', 'nsga2', 'cc-aco', 'bo', 'crldse']
     names = ['crldse', 'erdse', 'momprdse', 'acdse', 'nsga2', 'mopso', 'sac', 'ppo']
-    names_ = ['crldse', 'erdse', 'momprdse', 'acdse', 'nsga2', 'cc-aco', 'ppo', 'dtl']
+
 
     # 筛选数据
     all_data = [df[metric_list] for df in dataframes]
     all_metric_name_list = names_
     all_metric_data_list = []
-    for data, n in zip(all_data,names):
+    if metric_list[1] == 'latency':
+        for data in all_data:
+            data['latency'] = data['latency'] * 1000
+
+    for data, n in zip(all_data,names_):
         print(f"====== current data {n} ======")
         print(data.info())
         filtered_df = filter_invalid(data)

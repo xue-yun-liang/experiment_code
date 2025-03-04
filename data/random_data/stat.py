@@ -49,7 +49,9 @@ def plot_frequency(normal_frequency, cloud_frequency, embed_frequency):
     normal_counts = [normal_frequency.get(cat, 0) for cat in categories]
     cloud_counts = [cloud_frequency.get(cat, 0) for cat in categories]
     embed_counts = [embed_frequency.get(cat, 0) for cat in categories]
-    
+    print("sum normal:",sum(normal_counts))
+    print("sum cloud: ",sum(cloud_counts))
+    print("sum embed: ",sum(embed_counts))
 
     # 设置柱状图的宽度
     bar_width = 0.25
@@ -58,16 +60,27 @@ def plot_frequency(normal_frequency, cloud_frequency, embed_frequency):
     index = np.arange(len(categories))
 
     # 绘制柱状图
-    plt.bar(index, cloud_counts, bar_width, label='cloud')
-    plt.bar(index + bar_width, normal_counts, bar_width, label='pc')
-    plt.bar(index + 2 * bar_width, embed_counts, bar_width, label='embeded')
+    plt.figure(figsize=(10, 6))
+    plt.bar(index, cloud_counts, bar_width, edgecolor='black',label='cloud', color='#68BeD9')
+    plt.bar(index + bar_width, normal_counts, bar_width, edgecolor='black',label='pc', color='#ED8D5A')
+    plt.bar(index + 2 * bar_width, embed_counts, bar_width, edgecolor='black',label='embeded', color='#257D8B')
 
     # 添加标题和标签
     plt.xlabel('Frequency')
     plt.ylabel('Counts')
     # plt.title('Frequency Statistics of Normal, Cloud, and Embed Files')
-    plt.xticks(index + bar_width, categories, rotation=45)
+    plt.xticks(index + bar_width, categories)
     plt.legend()
+    def add_labels(ax, bars, color='black'):
+        for bar in bars:
+            height = bar.get_height()
+            ax.annotate('{}'.format(height),
+                        xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom', color=color)
+
+    add_labels(plt.gca(), plt.gca().patches)
 
     # 显示图形
     plt.savefig('reward_stat.png',dpi=600)
