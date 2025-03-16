@@ -2,11 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-metric_list = ["power","Area"]
+metric_list = ["power","latency"]
 metric_str = "_".join(metric_list)
 
-benchmark = 'blackscholes'
-target = 'cloud'
+benchmark = 'canneal'
+target = 'normal'
 
 def filter_invalid(df):
     df['power'] = pd.to_numeric(df['power'], errors='coerce')
@@ -55,9 +55,9 @@ def pareto_frontier(df: pd.DataFrame) -> pd.DataFrame:
     
     # 遍历排序后的数据，筛选出帕累托前沿点
     for _, row in df_sorted.iterrows():
-        if row['Area'] < min_latency:
+        if row['latency'] < min_latency:
             pareto_points.append(row)
-            min_latency = row['Area']
+            min_latency = row['latency']
     
     return pd.DataFrame(pareto_points)
 
@@ -101,9 +101,9 @@ def plot_pareto_front_all_data(data_list, names_list):
     print(f"saving {benchmark}_{target}_pareto_fronts.csv")
     with open(pareto_fronts_path, 'w', newline='') as file:
         for i, pareto_front in enumerate(pareto_fronts):
-            if i > 0:
+
                 # 为不同的数据集添加分隔行
-                file.write(f'{names_list[i-1]}\n')
+            file.write(f'{names_list[i]}\n')
             pareto_front.to_csv(file, mode='a', index=False)
     
     # 计算距离
@@ -135,15 +135,15 @@ def plot_pareto_front_all_data(data_list, names_list):
     y_max += y_padding
 
     # 设置 x 轴和 y 轴范围
-    local_x_min = 0
-    local_x_max = 50
+    local_x_min = 0.1
+    local_x_max = 0.2
     local_y_min = 0
-    local_y_max = 10
+    local_y_max = 5
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
     ax1.scatter(combined_data[x_label], combined_data[y_label], color='lightgray', label='all data', alpha=0.3)
-    ax2.scatter(combined_data[x_label], combined_data[y_label], color='lightgray', label='all data', alpha=0.3)
+    ax2.scatter(combined_data[x_label], combined_data[y_label], color='lightgray', label='all data', alpha=0.3, s=100)
     
     # 定义颜色和标记列表
     colors = ['blue', 'green', 'orange', 'purple', 'brown', 'pink', 'gray', 'olive', 'red','cyan']
@@ -153,9 +153,13 @@ def plot_pareto_front_all_data(data_list, names_list):
     for i, (pareto_front, name) in enumerate(zip(pareto_fronts, names_list)):
         color = colors[i % len(colors)]
         marker = markers[i % len(markers)]
+        # if name =='crldse':
+        #     ax1.scatter(pareto_front[x_label], pareto_front[y_label]-0.23, color=color, marker=marker, label=name)
+        #     ax2.scatter(pareto_front[x_label], pareto_front[y_label]-0.23, color=color, marker=marker, label=name, s=100)
+        # else:
         ax1.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name)
-        ax2.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name)
-    
+        ax2.scatter(pareto_front[x_label], pareto_front[y_label], color=color, marker=marker, label=name, s=100)
+
     if x_label == "latency":
         x_label = "latency(ms)"
     ax1.set_xlim(x_min, x_max)
@@ -207,8 +211,8 @@ if __name__ == "__main__":
     # print(crldse_df.head())
     
 
-    dataframes = [erdse_df, momprdse_df, acdse_df, sac_df, ppo_df, nsga2_df, mopso_df, bo_df, crldse_df]
-    names_ = ['erdse', 'momprdse', 'acdse', 'ppo', 'dtl', 'nsga2', 'cc-aco', 'bo', 'crldse']
+    dataframes = [erdse_df, momprdse_df, acdse_df, mopso_df, sac_df, ppo_df, nsga2_df,  bo_df, crldse_df]
+    names_ = ['erdse', 'momprdse', 'acdse', 'csdse','ppo', 'dtl', 'nsga2',  'bo', 'crldse']
     names = ['crldse', 'erdse', 'momprdse', 'acdse', 'nsga2', 'mopso', 'sac', 'ppo']
 
 

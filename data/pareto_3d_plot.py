@@ -7,7 +7,7 @@ metric_list = ["power","latency","Area"]
 metric_str = "_".join(metric_list)
 
 benchmark = 'canneal'
-target = 'normal'
+target = 'cloud'
 
 def filter_invalid(df):
     """
@@ -129,8 +129,8 @@ def plot_pareto_front_2d_with_3d(data_list, names_list):
             
     #     # print(f"{name}'s pareto:")
     #     # print(data)
-    p = pd.DataFrame({'power':[5.92992],'Area':41.17})
-    pareto_fronts_2d[5] = p
+    # p = pd.DataFrame({'power':[5.92992],'Area':41.17})
+    # pareto_fronts_2d[5] = p
 
     pareto_fronts_3d = []
     for data, name in zip(data_list, names_list):
@@ -170,23 +170,23 @@ def plot_pareto_front_2d_with_3d(data_list, names_list):
 
     # 设置图形
     fig = plt.figure(figsize=(16, 6))
-    gs = gridspec.GridSpec(1, 2, width_ratios=[1, 1.5])  # 第二个子图的高度是第一个子图的两倍
+    gs = gridspec.GridSpec(1, 2, width_ratios=[1, 1])  # 第二个子图的高度是第一个子图的两倍
 
 # 第一个子图
     ax1 = fig.add_subplot(gs[0])
 
     # 第一个子图：2D图
     # ax1 = fig.add_subplot(121)
-    ax1.scatter(combined_data[z_label], combined_data[x_label], color='lightgray', label='all data', alpha=0.3)
+    ax1.scatter(combined_data[z_label], combined_data[x_label], color='lightgray', label='all data', alpha=0.3, s=100)
     
     # 绘制每个数据集的帕累托前沿
     for i, (pareto_front, name) in enumerate(zip(pareto_fronts_2d, names_list)):
         color = colors[i % len(colors)]
         marker = markers[i % len(markers)]
-        ax1.scatter(pareto_front[z_label], pareto_front[x_label], color=color, marker=marker, label=name)
+        ax1.scatter(pareto_front[z_label], pareto_front[x_label], color=color, marker=marker, label=name, s=100)
     
-    ax1.set_xlim(0, 50)
-    ax1.set_ylim(0, 10)
+    ax1.set_xlim(0, 200)
+    ax1.set_ylim(0, 50)
     ax1.set_xlabel(z_label, fontsize=14)
     ax1.set_ylabel(x_label, fontsize=14)
     ax1.set_title("(a)", loc='center', pad=20)
@@ -247,8 +247,8 @@ if __name__ == "__main__":
     crldse_df['latency'] = crldse_df['latency'] * 1000
 
 
-    dataframes = [erdse_df, momprdse_df, acdse_df, sac_df, ppo_df, nsga2_df, mopso_df, bo_df, crldse_df]
-    names_ = ['erdse', 'momprdse', 'acdse', 'ppo', 'dtl', 'nsga2', 'cc-aco', 'bo', 'crldse']
+    dataframes = [erdse_df, momprdse_df, acdse_df, mopso_df, sac_df, ppo_df, nsga2_df,  bo_df, crldse_df]
+    names_ = ['erdse', 'momprdse', 'acdse', 'csdse','ppo', 'dtl', 'nsga2',  'bo', 'crldse']
     names = ['crldse', 'erdse', 'momprdse', 'acdse', 'nsga2', 'mopso', 'sac', 'ppo']
     
     # 筛选数据
